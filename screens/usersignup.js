@@ -7,40 +7,52 @@ class UserSignup extends Component {
     super(props);
 
     this.state = {
+      first_name: '',
+      last_name: '',
       email: '',
-      password: '',
-      firstname: '',
-      lastname: ''
+      password: ''
     }
   }
 
-  handleEmailInput = (email) => {
-    //add validation
-    this.setState({email: email});
-  }
+  signup = () => {
+    //Validation here...
 
-  handlePasswordInput = (pass) => {
-    //add validation
-    this.setState({password: password});
-  }
-
-  handleNameInput = (firstname, lastname) => {
-    //add validation
-    this.setState({firstname: firstname});
-    this.setState({lastname: lastname});
-  }
+    return fetch("http://192.168.0.44:3333/api/1.0.0/user", {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.state)
+    })
+    .then((response) => {
+        if(response.status === 201){
+            return response.json()
+        }else if(response.status === 400){
+            throw 'Failed validation';
+        }else{
+            throw 'Something went wrong';
+        }
+    })
+    .then((responseJson) => {
+           console.log("User created with ID: ", responseJson);
+           this.props.navigation.navigate("Login");
+    })
+    .catch((error) => {
+        console.log(error);
+    })
+}
 
   render() {
     let response = "";
 
     return (
     <View style={styles.container}>
-        <TextInput style={styles.TextInput} placeholder="firstname" onChangeText={this.handeNameInput} value={this.state.firstname}/>
-        <TextInput style={styles.TextInput} placeholder="lastname" onChangeText={this.handeNameInput} value={this.state.lastname}/>
-        <TextInput style={styles.TextInput} placeholder="email" onChangeText={this.handeEmailInput} value={this.state.email}/>
-        <TextInput style={styles.TextInput} placeholder="password" onChangeText={this.handePasswordInput} value={this.state.pass}/>
-        <TextInput style={styles.TextInput} placeholder="confirm password" onChangeText={this.handePasswordInput} value={this.state.pass}/>
-        <TouchableOpacity style={styles.buttonStyle}>
+        <TextInput style={styles.TextInput} placeholder="firstname" onChangeText={(first_name) => this.setState({first_name})} value={this.state.first_name}/>
+        <TextInput style={styles.TextInput} placeholder="lastname" onChangeText={(last_name) => this.setState({last_name})} value={this.state.last_name}/>
+        <TextInput style={styles.TextInput} placeholder="email" onChangeText={(email) => this.setState({email})} value={this.state.email}/>
+        <TextInput style={styles.TextInput} placeholder="password" onChangeText={(password) => this.setState({password})} value={this.state.pass}/>
+        <TextInput style={styles.TextInput} placeholder="confirm password"/>
+        <TouchableOpacity style={styles.buttonStyle} onPress={() => this.signup()}>
         <Text>Sign Up</Text>
         </TouchableOpacity>
         <Text>{response}</Text>
