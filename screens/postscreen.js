@@ -2,16 +2,14 @@ import React, { Component } from 'react';
 import { RefreshControl, StyleSheet, View, TextInput, Text, TouchableOpacity, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class HomeScreen extends Component {
+class PostScreen extends Component {
 
   constructor(props){
     super(props);
 
     this.state = {
       isLoading: true,
-      listData: [],
-      userName: "",
-      userId: "",
+      isEditing: false,
     }
   }
 
@@ -20,6 +18,10 @@ class HomeScreen extends Component {
       this.setState({isLoading: true})
       this.checkLoggedIn();
       this.getUserData();
+
+      if(isEditing){
+        this.getPostData
+      }
     });
   }
 
@@ -27,42 +29,9 @@ class HomeScreen extends Component {
     this.unsubscribe();
   }
 
-  getUserData = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
-    const id = await AsyncStorage.getItem('@session_id');
-    return fetch("http://192.168.0.56:3333/api/1.0.0/user/" + id, {
-          'headers': {
-            'X-Authorization':  value
-          }
-        })
-        .then((response) => {
-            if(response.status === 200){
-                return response.json()
-            }else if(response.status === 401){
-                this.logOut();
-            }else{
-                this.logOut();
-                throw 'Something went wrong';
-            }
-        })
-        .then((responseJson) => {
-          console.log(responseJson);
-          this.setState({
-            isLoading: false,
-            userId: responseJson.user_id,
-            userName: responseJson.first_name
-          })
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-  }
+  getPostData = async () => {
 
-  logOut = async () => {
-    await AsyncStorage.removeItem('@session_token');
-    await AsyncStorage.removeItem('@session_id');
-    this.props.navigation.navigate('Login');
-  };
+  }
 
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -85,18 +54,14 @@ class HomeScreen extends Component {
           <Text>Loading...</Text>
         </View>
       );
+    }else if(this.state.isEditing){
+
     }else{
       return (
         <View style={styles.container}>
           <Text style={styles.title}>SpaceBook</Text>
           <Text style={styles.subtitle}>Social media thats out of this world!</Text>
           <Text>Hey {this.state.userName}!</Text>
-          <TouchableOpacity style={styles.buttonStyle} onPress={() => this.props.navigation.navigate('Post')}>
-            <Text>Create Post</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonStyle} onPress={() => this.props.navigation.navigate('Friends')}>
-            <Text>Friends</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.buttonStyle} onPress={() => this.logOut()}>
             <Text>Log Out</Text>
           </TouchableOpacity>
@@ -134,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default PostScreen;

@@ -17,7 +17,7 @@ class UserLogin extends Component {
 
     //Validation here...
 
-    return fetch("http://192.168.0.44:3333/api/1.0.0/login", {
+    return fetch("http://192.168.0.56:3333/api/1.0.0/login", {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
