@@ -19,6 +19,7 @@ class FriendsScreen extends Component {
       findFriendsList: [],
       friendsList: [],
       friendRequests: [],
+      tabSelect: "myFriends",
     };
   }
 
@@ -196,9 +197,54 @@ class FriendsScreen extends Component {
           <Text>Loading...</Text>
         </View>
       );
-    } else {
+    } else if (this.state.tabSelect == "myFriends") {
       return (
         <View style={styles.container}>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.setState({ tabSelect: "friendReq" })}
+            >
+              <Text>Friend Request</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.setState({ tabSelect: "findFriends" })}
+            >
+              <Text>Find Friends</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.subtitle}>My Friends</Text>
+          <FlatList
+            data={this.state.friendsList}
+            renderItem={({ item }) => (
+              <View>
+                <Text>
+                  {item.user_givenname} {item.user_familyname}
+                </Text>
+              </View>
+            )}
+            keyExtractor={(item, index) => item.user_id.toString()}
+          />
+        </View>
+      );
+    } else if (this.state.tabSelect == "friendReq") {
+      return (
+        <View style={styles.container}>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.setState({ tabSelect: "myFriends" })}
+            >
+              <Text>My Friends</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.setState({ tabSelect: "findFriends" })}
+            >
+              <Text>Find Friends</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.subtitle}>Friend Requests</Text>
           <FlatList
             data={this.state.friendsRequests}
@@ -227,19 +273,25 @@ class FriendsScreen extends Component {
             )}
             keyExtractor={(item, index) => item.user_id.toString()}
           />
-          <Text style={styles.subtitle}>My Friends</Text>
-          <FlatList
-            data={this.state.friendsList}
-            renderItem={({ item }) => (
-              <View>
-                <Text>
-                  {item.user_givenname} {item.user_familyname}
-                </Text>
-              </View>
-            )}
-            keyExtracto
-            r={(item, index) => item.user_id.toString()}
-          />
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.setState({ tabSelect: "myFriends" })}
+            >
+              <Text>My Friends</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.setState({ tabSelect: "friendReq" })}
+            >
+              <Text>Friend Request</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.subtitle}>Find Friends</Text>
           <FlatList
             data={this.state.findFriendsList}
@@ -289,6 +341,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 5,
     width: 300,
+  },
+  tabButton: {
+    margin: 5,
+    backgroundColor: "#1269c7",
+    alignItems: "center",
+    borderWidth: 2,
+    padding: 5,
+    width: "45%",
   },
 });
 

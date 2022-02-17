@@ -46,11 +46,15 @@ class Posts extends Component {
       });
   };
 
+  postOrder() {}
+
   getPosts = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    for (let friend of this.state.friendList) {
-      return fetch(
+    this.state.friendList.push({ user_id: id });
+    console.log(this.state.friendList);
+    for (const friend of this.state.friendList) {
+      fetch(
         "http://192.168.0.56:3333/api/1.0.0/user/" +
           friend.user_id.toString() +
           "/post",
@@ -69,15 +73,15 @@ class Posts extends Component {
           }
         })
         .then((responseJson) => {
-          this.setState({
-            postList: responseJson,
-          });
-          console.log(this.state.postList);
+            this.setState({
+              postList: [...this.state.postList, ...responseJson],
+            });
         })
         .catch((error) => {
           console.log(error);
         });
     }
+    return;
   };
 
   render() {

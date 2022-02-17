@@ -100,25 +100,26 @@ class HomeScreen extends Component {
           <Text style={styles.subtitle}>
             Social media thats out of this world!
           </Text>
-          <Text>Hey {this.state.userName}!</Text>
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={() => this.props.navigation.navigate("Post")}
-          >
-            <Text>Create Post</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={() => this.props.navigation.navigate("Friends")}
-          >
-            <Text>Friends</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={() => this.logOut()}
-          >
-            <Text>Log Out</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.props.navigation.navigate("Post")}
+            >
+              <Text>Create Post</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.props.navigation.navigate("Friends")}
+            >
+              <Text>Friends</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.tabButton}
+              onPress={() => this.logOut()}
+            >
+              <Text>Log Out</Text>
+            </TouchableOpacity>
+          </View>
           <Posts />
         </View>
       );
@@ -151,6 +152,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 5,
     width: 300,
+  },
+  tabButton: {
+    margin: 3,
+    backgroundColor: "#1269c7",
+    alignItems: "center",
+    borderWidth: 2,
+    padding: 5,
+    width: "30%",
   },
 });
 
