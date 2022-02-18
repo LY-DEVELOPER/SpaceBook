@@ -186,21 +186,20 @@ class FriendsScreen extends Component {
   render() {
     if (this.state.isLoading) {
       return (
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text>Loading...</Text>
+        <View style={styles.container}>
+          <Text style={styles.text}>Loading...</Text>
         </View>
       );
     } else if (this.state.tabSelect == "myFriends") {
       return (
         <View style={styles.container}>
           <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={styles.selectedTab}
+              onPress={() => this.setState({ tabSelect: "myFriends" })}
+            >
+              <Text>My Friends</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.tabButton}
               onPress={() => this.setState({ tabSelect: "friendReq" })}
@@ -219,9 +218,15 @@ class FriendsScreen extends Component {
             data={this.state.friendsList}
             renderItem={({ item }) => (
               <View>
-                <Text>
+                <Text style={styles.text}>
                   {item.user_givenname} {item.user_familyname}
                 </Text>
+                <TouchableOpacity
+                  style={styles.buttonStyle}
+                  onPress={() => this.addFriend(item.user_id.toString())}
+                >
+                  <Text>View Profile</Text>
+                </TouchableOpacity>
               </View>
             )}
             keyExtractor={(item, index) => item.user_id.toString()}
@@ -239,6 +244,12 @@ class FriendsScreen extends Component {
               <Text>My Friends</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              style={styles.selectedTab}
+              onPress={() => this.setState({ tabSelect: "friendReq" })}
+            >
+              <Text>Friend Request</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={styles.tabButton}
               onPress={() => this.setState({ tabSelect: "findFriends" })}
             >
@@ -250,7 +261,7 @@ class FriendsScreen extends Component {
             data={this.state.friendsRequests}
             renderItem={({ item }) => (
               <View>
-                <Text>
+                <Text style={styles.text}>
                   {item.first_name} {item.last_name}
                 </Text>
                 <TouchableOpacity
@@ -291,15 +302,27 @@ class FriendsScreen extends Component {
             >
               <Text>Friend Request</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.selectedTab}
+              onPress={() => this.setState({ tabSelect: "findFriends" })}
+            >
+              <Text>Find Friends</Text>
+            </TouchableOpacity>
           </View>
           <Text style={styles.subtitle}>Find Friends</Text>
           <FlatList
             data={this.state.findFriendsList}
             renderItem={({ item }) => (
               <View>
-                <Text>
+                <Text style={styles.text}>
                   {item.user_givenname} {item.user_familyname}
                 </Text>
+                <TouchableOpacity
+                  style={styles.buttonStyle}
+                  onPress={() => this.addFriend(item.user_id.toString())}
+                >
+                  <Text>View Profile</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.buttonStyle}
                   onPress={() => this.addFriend(item.user_id.toString())}
@@ -319,20 +342,14 @@ class FriendsScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#303030",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 50,
-  },
-  title: {
-    fontSize: 50,
-    color: "#1269c7",
-    marginBottom: 5,
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 20,
     color: "#1269c7",
-    marginBottom: 30,
+    margin: 15,
   },
   buttonStyle: {
     marginTop: 10,
@@ -343,12 +360,24 @@ const styles = StyleSheet.create({
     width: 300,
   },
   tabButton: {
-    margin: 5,
+    margin: 1,
     backgroundColor: "#1269c7",
     alignItems: "center",
     borderWidth: 2,
     padding: 5,
-    width: "45%",
+    width: "32%",
+  },
+  selectedTab: {
+    margin: 1,
+    backgroundColor: "#303030",
+    alignItems: "center",
+    borderWidth: 2,
+    borderBottomWidth: 0,
+    padding: 5,
+    width: "32%",
+  },
+  text: {
+    color: "#1269c7",
   },
 });
 

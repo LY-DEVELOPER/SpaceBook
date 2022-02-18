@@ -5,7 +5,6 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  DatePickerIOS,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -21,6 +20,11 @@ class Posts extends Component {
   }
 
   componentDidMount() {
+    this.setState({
+      isLoading: true,
+      friendList: [],
+      postList: [],
+    });
     this.getFriends();
   }
 
@@ -58,10 +62,10 @@ class Posts extends Component {
     for (const friend of this.state.friendList) {
       await this.postFetch(friend, value, id);
     }
-    
+
     this.state.postList = await this.postOrder(this.state.postList);
 
-    this.setState({isLoading: false,});
+    this.setState({ isLoading: false });
   };
 
   postFetch = async (friend, value, id) => {
@@ -97,7 +101,6 @@ class Posts extends Component {
     console.log("Reodering");
     let newList = [data[0]];
     let skip = false;
-    console.log(newList);
     for (const i of data) {
       if (skip) {
         let place = 0;
@@ -107,7 +110,6 @@ class Posts extends Component {
           if (dateI < dateJ) {
             place = newList.indexOf(j) + 1;
           }
-          console.log(i.timestamp + " " + place);
         }
         if (place < newList.length) {
           const removedItems = newList.splice(place);
@@ -119,9 +121,71 @@ class Posts extends Component {
       }
       skip = true;
     }
-    console.log(newList);
     console.log("Reordered");
     return newList;
+  };
+
+  likePost = async (userId, postId) => {
+    const value = await AsyncStorage.getItem("@session_token");
+    return fetch(
+      "http://192.168.0.56:3333/api/1.0.0/user/" +
+        userId +
+        "/post/" +
+        postId +
+        "/like",
+      {
+        method: "POST",
+        headers: {
+          "X-Authorization": value,
+        },
+      }
+    )
+      .then((response) => {
+        console.log("Liking post " + postId);
+        this.componentDidMount();
+        if (response.status === 200) {
+          return response;
+        } else if (response.status === 403){
+          console.log("User has already liked this post");
+        }else {
+          throw "Something went wrong";
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  unLikePost = async (userId, postId) => {
+    const value = await AsyncStorage.getItem("@session_token");
+    const id = await AsyncStorage.getItem("@session_id");
+    return fetch(
+      "http://192.168.0.56:3333/api/1.0.0/user/" +
+        userId +
+        "/post/" +
+        postId +
+        "/like",
+      {
+        method: "DELETE",
+        headers: {
+          "X-Authorization": value,
+        },
+      }
+    )
+      .then((response) => {
+        console.log("UnLiking post " + postId);
+        this.componentDidMount();
+        if (response.status === 200) {
+          return response;
+        } else if (response.status === 403){
+          console.log("User has not liked this post");
+        } else {
+          throw "Something went wrong";
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   render() {
@@ -145,23 +209,23 @@ class Posts extends Component {
             data={this.state.postList}
             renderItem={({ item }) => (
               <View style={styles.post}>
-                <Text>
-                  {item.author.first_name} {item.author.last_name} - {(new Date(item.timestamp)).toDateString().substring(0,10)} at {(new Date(item.timestamp)).toTimeString().substring(0,5)}
+                <Text style={styles.text}>
+                  {item.author.first_name} {item.author.last_name} -{" "}
+                  {new Date(item.timestamp).toDateString().substring(0, 10)} at{" "}
+                  {new Date(item.timestamp).toTimeString().substring(0, 5)}
                 </Text>
-                <Text>{item.text}</Text>
-                <Text>
-                  Likes: {item.numLikes}
-                </Text>
+                <Text style={styles.postText}>{item.text}</Text>
+                <Text style={styles.text}> Likes: {item.numLikes}</Text>
                 <View style={{ flexDirection: "row" }}>
                   <TouchableOpacity
                     style={styles.buttonStyle}
-                    onPress={() => hey}
+                    onPress={() => this.likePost(item.author.user_id, item.post_id)}
                   >
                     <Text>Like</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonStyle}
-                    onPress={() => hey}
+                    onPress={() => this.unLikePost(item.author.user_id, item.post_id)}
                   >
                     <Text>Un Like</Text>
                   </TouchableOpacity>
@@ -179,18 +243,20 @@ class Posts extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
-    alignItems: "center",
+    backgroundColor: "#303030",
+    alignItems: "stretch",
     justifyContent: "center",
-    paddingBottom: 50,
     height: "100%",
+    marginBottom: 5,
   },
   post: {
-    marginTop: 10,
-    backgroundColor: "#fffffe",
+    marginTop: 5,
+    marginBottom: 5,
+    backgroundColor: "#202020",
     borderWidth: 2,
     padding: 5,
     width: "98%",
+    borderRadius: 7,
   },
   buttonStyle: {
     margin: 3,
@@ -199,6 +265,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 5,
     width: "20%",
+  },
+  text: {
+    color: "#1269c7",
+  },
+  postText: {
+    color: "#1269c7",
+    margin: 10,
+    minHeight: 60,
   },
 });
 

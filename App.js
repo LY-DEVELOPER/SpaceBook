@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, LogoTitle } from "react-native";
+import { Button, LogoTitle, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -19,12 +19,60 @@ class App extends Component {
   render() {
     return (
       <NavigationContainer>
+        <StatusBar backgroundColor="#202020" />
         <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Login" component={UserLogin} />
-          <Stack.Screen name="Signup" component={UserSignup} />
-          <Stack.Screen name="Post" component={PostScreen} />
-          <Stack.Screen name="Friends" component={FriendsScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="Login"
+            component={UserLogin}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Signup"
+            component={UserSignup}
+            options={{
+              headerStyle: {
+                backgroundColor: "#202020",
+              },
+              headerTintColor: "#1269c7",
+              headerTitleStyle: {
+                fontWeight: "bold",
+                color: "#1269c7",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Post"
+            component={PostScreen}
+            options={{
+              headerStyle: {
+                backgroundColor: "#202020",
+              },
+              headerTintColor: "#1269c7",
+              headerTitleStyle: {
+                fontWeight: "bold",
+                color: "#1269c7",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Friends"
+            component={FriendsScreen}
+            options={{
+              headerStyle: {
+                backgroundColor: "#202020",
+              },
+              headerTintColor: "#1269c7",
+              headerTitleStyle: {
+                fontWeight: "bold",
+                color: "#1269c7",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );

@@ -19,8 +19,6 @@ class UserLogin extends Component {
   }
 
   login = async () => {
-    //Validation here...
-
     return fetch("http://192.168.0.56:3333/api/1.0.0/login", {
       method: "post",
       headers: {
@@ -60,14 +58,19 @@ class UserLogin extends Component {
         <TextInput
           style={styles.TextInput}
           placeholder="email"
+          placeholderTextColor="#115297"
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
+          autoCapitalize='none'
         />
         <TextInput
           style={styles.TextInput}
           placeholder="password"
+          placeholderTextColor="#115297"
           onChangeText={(password) => this.setState({ password })}
+          secureTextEntry={true}
           value={this.state.pass}
+          autoCapitalize='none'
         />
         <TouchableOpacity
           style={styles.buttonStyle}
@@ -90,7 +93,7 @@ class UserLogin extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#303030",
     alignItems: "center",
     justifyContent: "center",
     paddingBottom: 50,
@@ -111,6 +114,7 @@ const styles = StyleSheet.create({
     width: 300,
     marginTop: 10,
     padding: 5,
+    color: "#1269c7",
   },
   buttonStyle: {
     marginTop: 10,

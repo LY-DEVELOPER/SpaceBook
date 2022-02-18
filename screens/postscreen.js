@@ -82,10 +82,13 @@ class PostScreen extends Component {
       return (
         <View style={styles.container}>
           <TextInput
-            style={styles.TextInput}
+            style={styles.textInput}
             placeholder="post"
+            placeholderTextColor="#115297"
             onChangeText={(text) => this.setState({ text })}
             value={this.state.text}
+            numberOfLines={4}
+            multiline
           />
           <TouchableOpacity
             style={styles.buttonStyle}
@@ -102,10 +105,9 @@ class PostScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#303030",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 50,
   },
   title: {
     fontSize: 50,
@@ -124,6 +126,16 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 5,
     width: 300,
+  },
+  textInput: {
+    textAlignVertical: "top",
+    borderWidth: 1,
+    borderColor: "black",
+    width: 300,
+    marginTop: 10,
+    padding: 5,
+    height: "30%",
+    color: "#1269c7",
   },
 });
 

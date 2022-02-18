@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  StatusBar,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Posts from "../components/posts";
@@ -32,6 +33,7 @@ class HomeScreen extends Component {
   }
 
   componentWillUnmount() {
+    this.setState({ isLoading: true });
     this.unsubscribe();
   }
 
@@ -82,14 +84,11 @@ class HomeScreen extends Component {
   render() {
     if (this.state.isLoading) {
       return (
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.container}>
+          <Text style={styles.title}>SpaceBook</Text>
+          <Text style={styles.subtitle}>
+            Social media thats out of this world!
+          </Text>
           <Text>Loading...</Text>
         </View>
       );
@@ -120,7 +119,7 @@ class HomeScreen extends Component {
               <Text>Log Out</Text>
             </TouchableOpacity>
           </View>
-          <Posts />
+          <Posts style={styles.posts} />
         </View>
       );
     }
@@ -129,11 +128,11 @@ class HomeScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 20,
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#303030",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 50,
   },
   title: {
     fontSize: 50,
@@ -143,7 +142,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 12,
     color: "#1269c7",
-    marginBottom: 30,
+    marginBottom: 15,
   },
   buttonStyle: {
     marginTop: 10,
