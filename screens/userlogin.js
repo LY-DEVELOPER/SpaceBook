@@ -19,7 +19,7 @@ class UserLogin extends Component {
   }
 
   login = async () => {
-    return fetch("http://192.168.0.56:3333/api/1.0.0/login", {
+    return fetch("http://"+global.ip+":3333/api/1.0.0/login", {
       method: "post",
       headers: {
         "Content-Type": "application/json",

@@ -8,8 +8,11 @@ import UserSignup from "./screens/usersignup";
 import HomeScreen from "./screens/homescreen";
 import PostScreen from "./screens/postscreen";
 import FriendsScreen from "./screens/friendscreen";
+import ProfileScreen from "./screens/profilescreen";
+import ProfilePhoto from "./screens/profilephoto";
 
 const Stack = createNativeStackNavigator();
+global.ip = "127.0.0.1";
 
 class App extends Component {
   refreshThis() {
@@ -57,6 +60,34 @@ class App extends Component {
           <Stack.Screen
             name="Friends"
             component={FriendsScreen}
+            options={{
+              headerStyle: {
+                backgroundColor: "#202020",
+              },
+              headerTintColor: "#1269c7",
+              headerTitleStyle: {
+                fontWeight: "bold",
+                color: "#1269c7",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{
+              headerStyle: {
+                backgroundColor: "#202020",
+              },
+              headerTintColor: "#1269c7",
+              headerTitleStyle: {
+                fontWeight: "bold",
+                color: "#1269c7",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="ProfilePhoto"
+            component={ProfilePhoto}
             options={{
               headerStyle: {
                 backgroundColor: "#202020",

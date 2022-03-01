@@ -40,7 +40,7 @@ class PostScreen extends Component {
     //Validation here...
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    return fetch("http://192.168.0.56:3333/api/1.0.0/user/" + id + "/post", {
+    return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id + "/post", {
       method: "post",
       headers: {
         "Content-Type": "application/json",

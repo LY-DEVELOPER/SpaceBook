@@ -26,7 +26,7 @@ class FriendsScreen extends Component {
   findFriends = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    return fetch("http://192.168.0.56:3333/api/1.0.0/search", {
+    return fetch("http://"+global.ip+":3333/api/1.0.0/search", {
       headers: {
         "X-Authorization": value,
       },
@@ -53,7 +53,7 @@ class FriendsScreen extends Component {
   getFriends = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    return fetch("http://192.168.0.56:3333/api/1.0.0/user/" + id + "/friends", {
+    return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id + "/friends", {
       headers: {
         "X-Authorization": value,
       },
@@ -80,7 +80,7 @@ class FriendsScreen extends Component {
   getFriendRequest = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    return fetch("http://192.168.0.56:3333/api/1.0.0/friendrequests", {
+    return fetch("http://"+global.ip+":3333/api/1.0.0/friendrequests", {
       headers: {
         "X-Authorization": value,
       },
@@ -109,7 +109,7 @@ class FriendsScreen extends Component {
     const id = await AsyncStorage.getItem("@session_id");
     console.log(friendId);
     return fetch(
-      "http://192.168.0.56:3333/api/1.0.0/friendrequests/" + friendId,
+      "http://"+global.ip+":3333/api/1.0.0/friendrequests/" + friendId,
       {
         method: decision,
         headers: {
@@ -138,7 +138,7 @@ class FriendsScreen extends Component {
     const id = await AsyncStorage.getItem("@session_id");
     console.log(friendId);
     return fetch(
-      "http://192.168.0.56:3333/api/1.0.0/user/" + friendId + "/friends",
+      "http://"+global.ip+":3333/api/1.0.0/user/" + friendId + "/friends",
       {
         method: "post",
         headers: {

@@ -15,7 +15,8 @@ class Posts extends Component {
     this.state = {
       isLoading: true,
       friendList: [],
-      postList: [],
+      postList: null,
+      postsExist: false,
     };
   }
 
@@ -32,7 +33,7 @@ class Posts extends Component {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
     console.log("getting friends");
-    return fetch("http://192.168.0.56:3333/api/1.0.0/user/" + id + "/friends", {
+    return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id + "/friends", {
       headers: {
         "X-Authorization": value,
       },
@@ -65,12 +66,16 @@ class Posts extends Component {
 
     this.state.postList = await this.postOrder(this.state.postList);
 
+    if(this.state.postList[0] != undefined){
+      this.setState({ postsExist: true });
+    }
+
     this.setState({ isLoading: false });
   };
 
   postFetch = async (friend, value, id) => {
     return fetch(
-      "http://192.168.0.56:3333/api/1.0.0/user/" +
+      "http://"+global.ip+":3333/api/1.0.0/user/" +
         friend.user_id.toString() +
         "/post",
       {
@@ -128,7 +133,7 @@ class Posts extends Component {
   likePost = async (userId, postId) => {
     const value = await AsyncStorage.getItem("@session_token");
     return fetch(
-      "http://192.168.0.56:3333/api/1.0.0/user/" +
+      "http://"+global.ip+":3333/api/1.0.0/user/" +
         userId +
         "/post/" +
         postId +
@@ -145,9 +150,9 @@ class Posts extends Component {
         this.componentDidMount();
         if (response.status === 200) {
           return response;
-        } else if (response.status === 403){
+        } else if (response.status === 403) {
           console.log("User has already liked this post");
-        }else {
+        } else {
           throw "Something went wrong";
         }
       })
@@ -160,7 +165,7 @@ class Posts extends Component {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
     return fetch(
-      "http://192.168.0.56:3333/api/1.0.0/user/" +
+      "http://"+global.ip+":3333/api/1.0.0/user/" +
         userId +
         "/post/" +
         postId +
@@ -177,7 +182,7 @@ class Posts extends Component {
         this.componentDidMount();
         if (response.status === 200) {
           return response;
-        } else if (response.status === 403){
+        } else if (response.status === 403) {
           console.log("User has not liked this post");
         } else {
           throw "Something went wrong";
@@ -202,6 +207,19 @@ class Posts extends Component {
           <Text>Loading...</Text>
         </View>
       );
+    } else if (!this.state.postsExist) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text>No posts to load</Text>
+        </View>
+      );
     } else {
       return (
         <View style={styles.container}>
@@ -219,13 +237,17 @@ class Posts extends Component {
                 <View style={{ flexDirection: "row" }}>
                   <TouchableOpacity
                     style={styles.buttonStyle}
-                    onPress={() => this.likePost(item.author.user_id, item.post_id)}
+                    onPress={() =>
+                      this.likePost(item.author.user_id, item.post_id)
+                    }
                   >
                     <Text>Like</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonStyle}
-                    onPress={() => this.unLikePost(item.author.user_id, item.post_id)}
+                    onPress={() =>
+                      this.unLikePost(item.author.user_id, item.post_id)
+                    }
                   >
                     <Text>Un Like</Text>
                   </TouchableOpacity>

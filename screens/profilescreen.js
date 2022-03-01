@@ -1,18 +1,15 @@
 import React, { Component } from "react";
 import {
-  RefreshControl,
   StyleSheet,
   View,
   TextInput,
   Text,
+  Image,
   TouchableOpacity,
-  FlatList,
-  StatusBar,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Posts from "../components/posts";
 
-class HomeScreen extends Component {
+class ProfileScreen extends Component {
   constructor(props) {
     super(props);
 
@@ -21,6 +18,7 @@ class HomeScreen extends Component {
       listData: [],
       userName: "",
       userId: "",
+      profilePic: null,
     };
   }
 
@@ -33,13 +31,13 @@ class HomeScreen extends Component {
   }
 
   componentWillUnmount() {
-    this.setState({ isLoading: true });
     this.unsubscribe();
   }
 
   getUserData = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
+    await this.getUserProfile(value, id);
     return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id, {
       headers: {
         "X-Authorization": value,
@@ -61,8 +59,30 @@ class HomeScreen extends Component {
           userId: responseJson.user_id,
           userName: responseJson.first_name,
         });
-        console.log("Retrieved data of user")
-        console.log("Finished loading home screen")
+        console.log("Retrieved data of user");
+        console.log("Finished Loading profile Screen");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  getUserProfile = async (value, id) => {
+    return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id + "/photo", {
+      method: "GET",
+      headers: {
+        "X-Authorization": value,
+      },
+    })
+      .then((response) => response.blob())
+      .then((res) => {
+        console.log("Type " + res.type);
+        let data = URL.createObjectURL(res);
+        this.setState({
+          profilePic: data,
+        });
+        console.log(data);
+        console.log("Retrieved Photo");
       })
       .catch((error) => {
         console.log(error);
@@ -96,37 +116,20 @@ class HomeScreen extends Component {
     } else {
       return (
         <View style={styles.container}>
-          <Text style={styles.title}>SpaceBook</Text>
-          <Text style={styles.subtitle}>
-            Social media thats out of this world!
-          </Text>
-          <View style={{ flexDirection: "row" }}>
+          <Image
+            source={{ uri: this.state.profilePic }}
+            style={{
+              width: 400,
+              height: 400,
+              borderWidth: 5,
+            }}
+          ></Image>
           <TouchableOpacity
-              style={styles.tabButton}
-              onPress={() => this.props.navigation.navigate("Profile")}
-            >
-              <Text>My Profile</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.tabButton}
-              onPress={() => this.props.navigation.navigate("Post")}
-            >
-              <Text>Create Post</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.tabButton}
-              onPress={() => this.props.navigation.navigate("Friends")}
-            >
-              <Text>Friends</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.tabButton}
-              onPress={() => this.logOut()}
-            >
-              <Text>Log Out</Text>
-            </TouchableOpacity>
-          </View>
-          <Posts style={styles.posts} />
+            style={styles.tabButton}
+            onPress={() => this.props.navigation.navigate("ProfilePhoto")}
+          >
+            <Text>Take Profile Picture</Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -169,4 +172,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default ProfileScreen;
