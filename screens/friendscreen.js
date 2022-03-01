@@ -125,9 +125,6 @@ class FriendsScreen extends Component {
           throw "Something went wrong";
         }
       })
-      .then((responseJson) => {
-        console.log(responseJson);
-      })
       .catch((error) => {
         console.log(error);
       });
@@ -223,7 +220,7 @@ class FriendsScreen extends Component {
                 </Text>
                 <TouchableOpacity
                   style={styles.buttonStyle}
-                  onPress={() => this.addFriend(item.user_id.toString())}
+                  onPress={() => this.props.navigation.navigate("Profile", {selectedId: item.user_id})}
                 >
                   <Text>View Profile</Text>
                 </TouchableOpacity>
@@ -319,7 +316,7 @@ class FriendsScreen extends Component {
                 </Text>
                 <TouchableOpacity
                   style={styles.buttonStyle}
-                  onPress={() => this.addFriend(item.user_id.toString())}
+                  onPress={() => this.props.navigation.navigate("Profile", {selectedId: item.user_id})}
                 >
                   <Text>View Profile</Text>
                 </TouchableOpacity>

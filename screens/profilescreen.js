@@ -38,7 +38,8 @@ class ProfileScreen extends Component {
 
   getUserData = async () => {
     const value = await AsyncStorage.getItem("@session_token");
-    const id = await AsyncStorage.getItem("@session_id");
+    let id = await AsyncStorage.getItem("@session_id");
+    if (this.props.route.params !== undefined) id = this.props.route.params.selectedId;
     await this.getUserProfile(value, id);
     return fetch("http://" + global.ip + ":3333/api/1.0.0/user/" + id, {
       headers: {
@@ -104,7 +105,7 @@ class ProfileScreen extends Component {
         email: this.state.email,
       };
     } else {
-      data = {password: this.state.password};
+      data = { password: this.state.password };
     }
 
     return fetch("http://" + global.ip + ":3333/api/1.0.0/user/" + id, {
@@ -118,7 +119,7 @@ class ProfileScreen extends Component {
       .then((response) => {
         if (response.status === 200) {
           console.log("Updated user");
-          this.setState({password: ""});
+          this.setState({ password: "" });
         } else if (response.status === 400) {
           throw "Failed validation";
         } else {
@@ -154,7 +155,7 @@ class ProfileScreen extends Component {
           <Text>Loading...</Text>
         </View>
       );
-    } else {
+    } else if (this.props.route.params === undefined) {
       return (
         <View style={styles.container}>
           <Image
@@ -215,6 +216,23 @@ class ProfileScreen extends Component {
           >
             <Text>Update Password</Text>
           </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <Image
+            source={{ uri: this.state.profilePic }}
+            style={{
+              width: 200,
+              height: 200,
+              borderWidth: 5,
+              borderRadius: "100%",
+            }}
+          ></Image>
+          <Text>{this.state.first_name}</Text>
+          <Text>{this.state.last_name}</Text>
+          <Text>{this.state.email}</Text>
         </View>
       );
     }
