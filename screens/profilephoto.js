@@ -22,7 +22,6 @@ class ProfilePhoto extends Component {
   uploadPicture = async (data) => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    console.log("ey");
     let res = await fetch(data.base64);
     let blob = await res.blob();
 
@@ -48,11 +47,12 @@ class ProfilePhoto extends Component {
   takePicture = async () => {
     if (this.camera) {
       const options = {
-        quality: 0.5,
+        quality: 0.25,
         base64: true,
         onPictureSaved: (data) => this.uploadPicture(data),
       };
-
+      const ratios = await this.camera.getAvailablePictureSizesAsync();
+      console.log(ratios);
       await this.camera.takePictureAsync(options);
     }
   };
@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-    aspectRatio: 12/16,
     height: "auto",
+    aspectRatio: "1/1",
     justifyContent: "flex-end",
     alignItems: "center",
   },
