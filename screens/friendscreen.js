@@ -39,7 +39,6 @@ class FriendsScreen extends Component {
         }
       })
       .then((responseJson) => {
-        console.log(responseJson);
         this.setState({
           isLoading: false,
           findFriendsList: responseJson,
@@ -66,7 +65,6 @@ class FriendsScreen extends Component {
         }
       })
       .then((responseJson) => {
-        console.log(responseJson);
         this.setState({
           isLoading: false,
           friendsList: responseJson,
@@ -93,7 +91,6 @@ class FriendsScreen extends Component {
         }
       })
       .then((responseJson) => {
-        console.log(responseJson);
         this.setState({
           isLoading: false,
           friendsRequests: responseJson,
@@ -107,7 +104,6 @@ class FriendsScreen extends Component {
   friendDecision = async (friendId, decision) => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    console.log(friendId);
     return fetch(
       "http://"+global.ip+":3333/api/1.0.0/friendrequests/" + friendId,
       {
@@ -118,7 +114,6 @@ class FriendsScreen extends Component {
       }
     )
       .then((response) => {
-        console.log(response.status);
         if (response.status === 200) {
           return response.json();
         } else {
@@ -133,7 +128,6 @@ class FriendsScreen extends Component {
   addFriend = async (friendId) => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    console.log(friendId);
     return fetch(
       "http://"+global.ip+":3333/api/1.0.0/user/" + friendId + "/friends",
       {
@@ -144,15 +138,11 @@ class FriendsScreen extends Component {
       }
     )
       .then((response) => {
-        console.log(response.status);
         if (response.status === 200) {
           return response.json();
         } else {
           throw "Something went wrong";
         }
-      })
-      .then((responseJson) => {
-        console.log(responseJson);
       })
       .catch((error) => {
         console.log(error);

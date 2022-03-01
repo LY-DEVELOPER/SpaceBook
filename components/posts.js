@@ -26,57 +26,78 @@ class Posts extends Component {
       friendList: [],
       postList: [],
     });
-    this.getFriends();
+    if (this.props.selectedId === undefined) {
+      this.getFriends(false);
+    } else {
+      this.getFriends(true);
+    }
   }
 
-  getFriends = async () => {
+  getFriends = async (skip) => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
     console.log("getting friends");
-    return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id + "/friends", {
-      headers: {
-        "X-Authorization": value,
-      },
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          console.log("Got Friends");
-          return response.json();
-        } else {
-          throw "Something went wrong";
+    if (!skip) {
+      return fetch(
+        "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/friends",
+        {
+          headers: {
+            "X-Authorization": value,
+          },
         }
-      })
-      .then((responseJson) => {
-        this.setState({
-          friendList: responseJson,
+      )
+        .then((response) => {
+          if (response.status === 200) {
+            console.log("Got Friends");
+            return response.json();
+          } else {
+            throw "Something went wrong";
+          }
+        })
+        .then((responseJson) => {
+          this.setState({
+            friendList: responseJson,
+          });
+          this.getPosts(value, id);
+        })
+        .catch((error) => {
+          console.log(error);
         });
-        this.getPosts(value, id);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    } else {
+      this.getPosts(value, this.props.selectedId);
+    }
   };
 
   getPosts = async (value, id) => {
     this.state.friendList.push({ user_id: id });
-
-    for (const friend of this.state.friendList) {
-      await this.postFetch(friend, value, id);
+    if (this.props === undefined) {
+      await this.postFetch(selectedId, value, true);
+    }else{
+      for (const friend of this.state.friendList) {
+        await this.postFetch(friend, value, false);
+      }
+      this.state.postList = await this.postOrder(this.state.postList);
     }
 
-    this.state.postList = await this.postOrder(this.state.postList);
-
-    if(this.state.postList[0] != undefined){
+    if (this.state.postList[0] != undefined) {
       this.setState({ postsExist: true });
     }
 
     this.setState({ isLoading: false });
   };
 
-  postFetch = async (friend, value, id) => {
+  postFetch = async (friend, value, onePerson) => {
+    let id;
+    if(onePerson){
+      id = friend;
+    }else{
+      id = friend.user_id.toString();
+    }
     return fetch(
-      "http://"+global.ip+":3333/api/1.0.0/user/" +
-        friend.user_id.toString() +
+      "http://" +
+        global.ip +
+        ":3333/api/1.0.0/user/" +
+        id +
         "/post",
       {
         headers: {
@@ -133,7 +154,9 @@ class Posts extends Component {
   likePost = async (userId, postId) => {
     const value = await AsyncStorage.getItem("@session_token");
     return fetch(
-      "http://"+global.ip+":3333/api/1.0.0/user/" +
+      "http://" +
+        global.ip +
+        ":3333/api/1.0.0/user/" +
         userId +
         "/post/" +
         postId +
@@ -165,7 +188,9 @@ class Posts extends Component {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
     return fetch(
-      "http://"+global.ip+":3333/api/1.0.0/user/" +
+      "http://" +
+        global.ip +
+        ":3333/api/1.0.0/user/" +
         userId +
         "/post/" +
         postId +

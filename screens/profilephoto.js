@@ -25,14 +25,17 @@ class ProfilePhoto extends Component {
     let res = await fetch(data.base64);
     let blob = await res.blob();
 
-    return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id + "/photo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "image/png",
-        "X-Authorization": value,
-      },
-      body: blob,
-    })
+    return fetch(
+      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/photo",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "image/png",
+          "X-Authorization": value,
+        },
+        body: blob,
+      }
+    )
       .then((response) => {
         console.log("Uploaded photo");
       })
@@ -79,7 +82,13 @@ class ProfilePhoto extends Component {
             type={this.state.type}
             ref={(ref) => (this.camera = ref)}
           >
-            <View style={{ flexDirection: "row" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <TouchableOpacity
                 style={styles.buttonStyle}
                 onPress={() => {
@@ -125,12 +134,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 5,
     margin: "1%",
-    width: "33%",
+    width: "100%",
   },
   camera: {
     flex: 1,
-    height: "auto",
-    aspectRatio: "1/1",
+    aspectRatio: 1,
     justifyContent: "flex-end",
     alignItems: "center",
   },

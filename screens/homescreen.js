@@ -100,18 +100,18 @@ class HomeScreen extends Component {
           <Text style={styles.subtitle}>
             Social media thats out of this world!
           </Text>
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", width: 300, justifyContent: "center"}}>
           <TouchableOpacity
               style={styles.tabButton}
               onPress={() => this.props.navigation.navigate("Profile")}
             >
-              <Text>My Profile</Text>
+              <Text>Profile</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.tabButton}
               onPress={() => this.props.navigation.navigate("Post")}
             >
-              <Text>Create Post</Text>
+              <Text>Post</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.tabButton}
@@ -140,6 +140,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#303030",
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: "center",
+    width: "100%",
   },
   title: {
     fontSize: 50,
@@ -151,21 +153,14 @@ const styles = StyleSheet.create({
     color: "#1269c7",
     marginBottom: 15,
   },
-  buttonStyle: {
-    marginTop: 10,
-    backgroundColor: "#1269c7",
-    alignItems: "center",
-    borderWidth: 2,
-    padding: 5,
-    width: 300,
-  },
   tabButton: {
     margin: 3,
     backgroundColor: "#1269c7",
     alignItems: "center",
+    justifyContent: "center",
     borderWidth: 2,
     padding: 5,
-    width: "23%",
+    width: "25%",
   },
 });
 

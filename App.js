@@ -12,7 +12,7 @@ import ProfileScreen from "./screens/profilescreen";
 import ProfilePhoto from "./screens/profilephoto";
 
 const Stack = createNativeStackNavigator();
-global.ip = "127.0.0.1";
+global.ip = "192.168.1.206";
 
 class App extends Component {
   refreshThis() {

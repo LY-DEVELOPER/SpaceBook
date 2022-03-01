@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Posts from "../components/posts";
 
 class ProfileScreen extends Component {
   constructor(props) {
@@ -16,11 +17,13 @@ class ProfileScreen extends Component {
     this.state = {
       isLoading: true,
       listData: [],
+      user_id: "",
       first_name: "",
       last_name: "",
       email: "",
       password: "",
       profilePic: null,
+      edit: false,
     };
   }
 
@@ -39,7 +42,8 @@ class ProfileScreen extends Component {
   getUserData = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     let id = await AsyncStorage.getItem("@session_id");
-    if (this.props.route.params !== undefined) id = this.props.route.params.selectedId;
+    if (this.props.route.params !== undefined)
+      id = this.props.route.params.selectedId;
     await this.getUserProfile(value, id);
     return fetch("http://" + global.ip + ":3333/api/1.0.0/user/" + id, {
       headers: {
@@ -62,6 +66,7 @@ class ProfileScreen extends Component {
           first_name: responseJson.first_name,
           last_name: responseJson.last_name,
           email: responseJson.email,
+          user_id: responseJson.user_id,
         });
         console.log("Retrieved data of user");
         console.log("Finished Loading profile Screen");
@@ -119,7 +124,7 @@ class ProfileScreen extends Component {
       .then((response) => {
         if (response.status === 200) {
           console.log("Updated user");
-          this.setState({ password: "" });
+          this.setState({ password: "", edit: false });
         } else if (response.status === 400) {
           throw "Failed validation";
         } else {
@@ -155,7 +160,7 @@ class ProfileScreen extends Component {
           <Text>Loading...</Text>
         </View>
       );
-    } else if (this.props.route.params === undefined) {
+    } else if (this.props.route.params === undefined && this.state.edit === true) {
       return (
         <View style={styles.container}>
           <Image
@@ -164,11 +169,11 @@ class ProfileScreen extends Component {
               width: 200,
               height: 200,
               borderWidth: 5,
-              borderRadius: "100%",
+              borderRadius: 200,
             }}
           ></Image>
           <TouchableOpacity
-            style={styles.tabButton}
+            style={styles.buttonStyle}
             onPress={() => this.props.navigation.navigate("ProfilePhoto")}
           >
             <Text>Take Profile Picture</Text>
@@ -196,7 +201,7 @@ class ProfileScreen extends Component {
             autoCapitalize="none"
           />
           <TouchableOpacity
-            style={styles.tabButton}
+            style={styles.buttonStyle}
             onPress={() => this.updateUser(false)}
           >
             <Text>Save Changes</Text>
@@ -211,11 +216,36 @@ class ProfileScreen extends Component {
             autoCapitalize="none"
           />
           <TouchableOpacity
-            style={styles.tabButton}
+            style={styles.buttonStyle}
             onPress={() => this.updateUser(true)}
           >
             <Text>Update Password</Text>
           </TouchableOpacity>
+        </View>
+      );
+    } else if (this.props.route.params === undefined) {
+      return (
+        <View style={styles.container}>
+          <Image
+            source={{ uri: this.state.profilePic }}
+            style={{
+              width: 200,
+              height: 200,
+              borderWidth: 5,
+              borderRadius: "100%",
+            }}
+          ></Image>
+          <Text>
+            {this.state.first_name} {this.state.last_name}
+          </Text>
+          <Text>{this.state.email}</Text>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={() => this.setState({ edit: true })}
+          >
+            <Text>Edit Profile</Text>
+          </TouchableOpacity>
+          <Posts selectedId={this.state.user_id}></Posts>
         </View>
       );
     } else {
@@ -230,9 +260,11 @@ class ProfileScreen extends Component {
               borderRadius: "100%",
             }}
           ></Image>
-          <Text>{this.state.first_name}</Text>
-          <Text>{this.state.last_name}</Text>
+          <Text>
+            {this.state.first_name} {this.state.last_name}
+          </Text>
           <Text>{this.state.email}</Text>
+          <Posts selectedId={this.state.user_id}></Posts>
         </View>
       );
     }
