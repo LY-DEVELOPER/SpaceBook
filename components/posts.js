@@ -17,6 +17,7 @@ class Posts extends Component {
       friendList: [],
       postList: null,
       postsExist: false,
+      userId: "",
     };
   }
 
@@ -36,6 +37,7 @@ class Posts extends Component {
   getFriends = async (skip) => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
+    this.setState({ userId: id });
     console.log("getting friends");
     if (!skip) {
       return fetch(
@@ -68,11 +70,35 @@ class Posts extends Component {
     }
   };
 
+  deletePost = async (postId) => {
+    const value = await AsyncStorage.getItem("@session_token");
+    const id = await AsyncStorage.getItem("@session_id");
+    return fetch(
+      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/post/" + postId,
+      {
+        method: "DELETE",
+        headers: {
+          "X-Authorization": value,
+        },
+      }
+    )
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("Deleted Post");
+        } else {
+          throw "Something went wrong";
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   getPosts = async (value, id) => {
     this.state.friendList.push({ user_id: id });
     if (this.props === undefined) {
       await this.postFetch(selectedId, value, true);
-    }else{
+    } else {
       for (const friend of this.state.friendList) {
         await this.postFetch(friend, value, false);
       }
@@ -88,17 +114,13 @@ class Posts extends Component {
 
   postFetch = async (friend, value, onePerson) => {
     let id;
-    if(onePerson){
+    if (onePerson) {
       id = friend;
-    }else{
+    } else {
       id = friend.user_id.toString();
     }
     return fetch(
-      "http://" +
-        global.ip +
-        ":3333/api/1.0.0/user/" +
-        id +
-        "/post",
+      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/post",
       {
         headers: {
           "X-Authorization": value,
@@ -260,22 +282,40 @@ class Posts extends Component {
                 <Text style={styles.postText}>{item.text}</Text>
                 <Text style={styles.text}> Likes: {item.numLikes}</Text>
                 <View style={{ flexDirection: "row" }}>
-                  <TouchableOpacity
-                    style={styles.buttonStyle}
-                    onPress={() =>
-                      this.likePost(item.author.user_id, item.post_id)
-                    }
-                  >
-                    <Text>Like</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.buttonStyle}
-                    onPress={() =>
-                      this.unLikePost(item.author.user_id, item.post_id)
-                    }
-                  >
-                    <Text>Un Like</Text>
-                  </TouchableOpacity>
+                  {this.state.userId == item.author.user_id ? (
+                    <TouchableOpacity
+                      style={styles.buttonStyle}
+                      onPress={() => this.props.navigation.navigate("Post")}
+                    >
+                      <Text>Edit</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.buttonStyle}
+                      onPress={() =>
+                        this.likePost(item.author.user_id, item.post_id)
+                      }
+                    >
+                      <Text>Like</Text>
+                    </TouchableOpacity>
+                  )}
+                  {this.state.userId == item.author.user_id ? (
+                    <TouchableOpacity
+                      style={styles.buttonStyle}
+                      onPress={() => this.deletePost(item.post_id)}
+                    >
+                      <Text>Delete</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.buttonStyle}
+                      onPress={() =>
+                        this.unLikePost(item.author.user_id, item.post_id)
+                      }
+                    >
+                      <Text>Un Like</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             )}
