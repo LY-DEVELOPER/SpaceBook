@@ -1,24 +1,20 @@
-import React, { Component } from "react";
-import { Button, LogoTitle, StatusBar } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { PureComponent } from 'react';
+import { StatusBar } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import UserLogin from "./screens/userlogin";
-import UserSignup from "./screens/usersignup";
-import HomeScreen from "./screens/homescreen";
-import PostScreen from "./screens/postscreen";
-import FriendsScreen from "./screens/friendscreen";
-import ProfileScreen from "./screens/profilescreen";
-import ProfilePhoto from "./screens/profilephoto";
+import UserLogin from './screens/userlogin';
+import UserSignup from './screens/usersignup';
+import HomeScreen from './screens/homescreen';
+import PostScreen from './screens/postscreen';
+import FriendsScreen from './screens/friendscreen';
+import ProfileScreen from './screens/profilescreen';
+import ProfilePhoto from './screens/profilephoto';
 
 const Stack = createNativeStackNavigator();
-global.ip = "127.0.0.1";
+global.ip = '127.0.0.1';
 
-class App extends Component {
-  refreshThis() {
-    window.location.reload();
-  }
-
+class App extends PureComponent {
   render() {
     return (
       <NavigationContainer>
@@ -34,12 +30,12 @@ class App extends Component {
             component={UserSignup}
             options={{
               headerStyle: {
-                backgroundColor: "#202020",
+                backgroundColor: '#202020',
               },
-              headerTintColor: "#1269c7",
+              headerTintColor: '#1269c7',
               headerTitleStyle: {
-                fontWeight: "bold",
-                color: "#1269c7",
+                fontWeight: 'bold',
+                color: '#1269c7',
               },
             }}
           />
@@ -48,12 +44,12 @@ class App extends Component {
             component={PostScreen}
             options={{
               headerStyle: {
-                backgroundColor: "#202020",
+                backgroundColor: '#202020',
               },
-              headerTintColor: "#1269c7",
+              headerTintColor: '#1269c7',
               headerTitleStyle: {
-                fontWeight: "bold",
-                color: "#1269c7",
+                fontWeight: 'bold',
+                color: '#1269c7',
               },
             }}
           />
@@ -62,12 +58,12 @@ class App extends Component {
             component={FriendsScreen}
             options={{
               headerStyle: {
-                backgroundColor: "#202020",
+                backgroundColor: '#202020',
               },
-              headerTintColor: "#1269c7",
+              headerTintColor: '#1269c7',
               headerTitleStyle: {
-                fontWeight: "bold",
-                color: "#1269c7",
+                fontWeight: 'bold',
+                color: '#1269c7',
               },
             }}
           />
@@ -76,12 +72,12 @@ class App extends Component {
             component={ProfileScreen}
             options={{
               headerStyle: {
-                backgroundColor: "#202020",
+                backgroundColor: '#202020',
               },
-              headerTintColor: "#1269c7",
+              headerTintColor: '#1269c7',
               headerTitleStyle: {
-                fontWeight: "bold",
-                color: "#1269c7",
+                fontWeight: 'bold',
+                color: '#1269c7',
               },
             }}
           />
@@ -90,12 +86,12 @@ class App extends Component {
             component={ProfilePhoto}
             options={{
               headerStyle: {
-                backgroundColor: "#202020",
+                backgroundColor: '#202020',
               },
-              headerTintColor: "#1269c7",
+              headerTintColor: '#1269c7',
               headerTitleStyle: {
-                fontWeight: "bold",
-                color: "#1269c7",
+                fontWeight: 'bold',
+                color: '#1269c7',
               },
             }}
           />

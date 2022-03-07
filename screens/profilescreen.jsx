@@ -40,14 +40,14 @@ class ProfileScreen extends Component {
   }
 
   getUserData = async () => {
-    const value = await AsyncStorage.getItem("@session_token");
+    const authValue = await AsyncStorage.getItem("@session_token");
     let id = await AsyncStorage.getItem("@session_id");
     if (this.props.route.params !== undefined)
       id = this.props.route.params.selectedId;
-    await this.getUserProfile(value, id);
+    await this.getUserProfile(authValue, id);
     return fetch("http://" + global.ip + ":3333/api/1.0.0/user/" + id, {
       headers: {
-        "X-Authorization": value,
+        "X-Authorization": authValue,
       },
     })
       .then((response) => {
@@ -76,13 +76,13 @@ class ProfileScreen extends Component {
       });
   };
 
-  getUserProfile = async (value, id) => {
+  getUserProfile = async (authValue, id) => {
     return fetch(
       "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/photo",
       {
         method: "GET",
         headers: {
-          "X-Authorization": value,
+          "X-Authorization": authValue,
         },
       }
     )
@@ -100,7 +100,7 @@ class ProfileScreen extends Component {
   };
 
   updateUser = async (password) => {
-    const value = await AsyncStorage.getItem("@session_token");
+    const authValue = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
     let data;
     if (!password) {
@@ -117,7 +117,7 @@ class ProfileScreen extends Component {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "X-Authorization": value,
+        "X-Authorization": authValue,
       },
       body: JSON.stringify(data),
     })
@@ -143,8 +143,8 @@ class ProfileScreen extends Component {
   };
 
   checkLoggedIn = async () => {
-    const value = await AsyncStorage.getItem("@session_token");
-    if (value == null) {
+    const authValue = await AsyncStorage.getItem("@session_token");
+    if (authValue == null) {
       this.props.navigation.navigate("Login");
     }
   };
@@ -183,21 +183,21 @@ class ProfileScreen extends Component {
             placeholder="firstname"
             placeholderTextColor="#115297"
             onChangeText={(first_name) => this.setState({ first_name })}
-            value={this.state.first_name}
+            authValue={this.state.first_name}
           />
           <TextInput
             style={styles.TextInput}
             placeholder="lastname"
             placeholderTextColor="#115297"
             onChangeText={(last_name) => this.setState({ last_name })}
-            value={this.state.last_name}
+            authValue={this.state.last_name}
           />
           <TextInput
             style={styles.TextInput}
             placeholder="email"
             placeholderTextColor="#115297"
             onChangeText={(email) => this.setState({ email })}
-            value={this.state.email}
+            authValue={this.state.email}
             autoCapitalize="none"
           />
           <TouchableOpacity
@@ -212,7 +212,7 @@ class ProfileScreen extends Component {
             placeholderTextColor="#115297"
             secureTextEntry={true}
             onChangeText={(password) => this.setState({ password })}
-            value={this.state.password}
+            authValue={this.state.password}
             autoCapitalize="none"
           />
           <TouchableOpacity

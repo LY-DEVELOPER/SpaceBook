@@ -26,7 +26,13 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@expo/webpack-config": "^0.16.18"
+    "@expo/webpack-config": "^0.16.18",
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.29.3",
+    "eslint-plugin-react-hooks": "^4.3.0"
   },
   "private": true
 }

@@ -1,7 +1,9 @@
-import React, { Component } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Camera } from "expo-camera";
+import React, { Component } from 'react';
+import {
+  StyleSheet, View, Text, TouchableOpacity,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Camera } from 'expo-camera';
 
 class ProfilePhoto extends Component {
   constructor(props) {
@@ -15,32 +17,30 @@ class ProfilePhoto extends Component {
 
   async componentDidMount() {
     const { status } = await Camera.requestCameraPermissionsAsync();
-    this.setState({ hasPermission: status === "granted" });
+    this.setState({ hasPermission: status === 'granted' });
     this.checkLoggedIn();
   }
 
   uploadPicture = async (data) => {
-    const value = await AsyncStorage.getItem("@session_token");
-    const id = await AsyncStorage.getItem("@session_id");
-    let res = await fetch(data.base64);
-    let blob = await res.blob();
+    const authValue = await AsyncStorage.getItem('@session_token');
+    const id = await AsyncStorage.getItem('@session_id');
+    const res = await fetch(data.base64);
+    const blob = await res.blob();
 
     return fetch(
-      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/photo",
+      `http://${global.ip}:3333/api/1.0.0/user/${id}/photo`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "image/png",
-          "X-Authorization": value,
+          'Content-Type': 'image/png',
+          'X-Authorization': authValue,
         },
         body: blob,
-      }
+      },
     )
-      .then((response) => {
-        console.log("Uploaded photo");
-      })
       .then(() => {
-        this.props.navigation.navigate("Profile");
+        console.log('Uploaded photo');
+        this.props.navigation.navigate('Profile');
       })
       .catch((error) => {
         console.log(error);
@@ -61,15 +61,15 @@ class ProfilePhoto extends Component {
   };
 
   logOut = async () => {
-    await AsyncStorage.removeItem("@session_token");
-    await AsyncStorage.removeItem("@session_id");
-    this.props.navigation.navigate("Login");
+    await AsyncStorage.removeItem('@session_token');
+    await AsyncStorage.removeItem('@session_id');
+    this.props.navigation.navigate('Login');
   };
 
   checkLoggedIn = async () => {
-    const value = await AsyncStorage.getItem("@session_token");
-    if (value == null) {
-      this.props.navigation.navigate("Login");
+    const authValue = await AsyncStorage.getItem('@session_token');
+    if (authValue == null) {
+      this.logOut();
     }
   };
 
@@ -84,20 +84,19 @@ class ProfilePhoto extends Component {
           >
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               <TouchableOpacity
                 style={styles.buttonStyle}
                 onPress={() => {
-                  let type =
-                    this.state.type == Camera.Constants.Type.back
-                      ? Camera.Constants.Type.front
-                      : Camera.Constants.Type.back;
+                  const type = this.state.type === Camera.Constants.Type.back.toString()
+                    ? Camera.Constants.Type.front
+                    : Camera.Constants.Type.back;
 
-                  this.setState({ type: type });
+                  this.setState({ type });
                 }}
               >
                 <Text> Flip </Text>
@@ -114,33 +113,32 @@ class ProfilePhoto extends Component {
           </Camera>
         </View>
       );
-    } else {
-      return <Text>No access to camera</Text>;
     }
+    return <Text>No access to camera</Text>;
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#303030",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#303030',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonStyle: {
     marginBottom: 10,
-    backgroundColor: "#1269c7",
-    alignItems: "center",
+    backgroundColor: '#1269c7',
+    alignItems: 'center',
     borderWidth: 2,
     padding: 5,
-    margin: "1%",
-    width: "100%",
+    margin: '1%',
+    width: '100%',
   },
   camera: {
     flex: 1,
     aspectRatio: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
 });
 
