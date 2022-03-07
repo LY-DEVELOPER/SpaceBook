@@ -50,21 +50,21 @@ class UserSignup extends Component {
           placeholder="firstname"
           placeholderTextColor="#115297"
           onChangeText={(first_name) => this.setState({ first_name })}
-          authValue={this.state.first_name}
+          value={this.state.first_name}
         />
         <TextInput
           style={styles.TextInput}
           placeholder="lastname"
           placeholderTextColor="#115297"
           onChangeText={(last_name) => this.setState({ last_name })}
-          authValue={this.state.last_name}
+          value={this.state.last_name}
         />
         <TextInput
           style={styles.TextInput}
           placeholder="email"
           placeholderTextColor="#115297"
           onChangeText={(email) => this.setState({ email })}
-          authValue={this.state.email}
+          value={this.state.email}
           autoCapitalize="none"
         />
         <TextInput
@@ -73,7 +73,7 @@ class UserSignup extends Component {
           placeholderTextColor="#115297"
           secureTextEntry
           onChangeText={(password) => this.setState({ password })}
-          authValue={this.state.pass}
+          value={this.state.pass}
           autoCapitalize="none"
         />
         <TextInput

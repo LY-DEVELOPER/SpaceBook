@@ -55,7 +55,7 @@ class UserLogin extends Component {
           placeholder="email"
           placeholderTextColor="#115297"
           onChangeText={(email) => this.setState({ email })}
-          authValue={this.state.email}
+          value={this.state.email}
           autoCapitalize="none"
         />
         <TextInput
@@ -64,7 +64,7 @@ class UserLogin extends Component {
           placeholderTextColor="#115297"
           onChangeText={(password) => this.setState({ password })}
           secureTextEntry
-          authValue={this.state.pass}
+          value={this.state.pass}
           autoCapitalize="none"
         />
         <TouchableOpacity

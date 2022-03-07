@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,9 +6,9 @@ import {
   Text,
   Image,
   TouchableOpacity,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Posts from "../components/posts";
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Posts from '../components/posts';
 
 class ProfileScreen extends Component {
   constructor(props) {
@@ -16,19 +16,18 @@ class ProfileScreen extends Component {
 
     this.state = {
       isLoading: true,
-      listData: [],
-      user_id: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      password: "",
+      user_id: '',
+      first_name: '',
+      last_name: '',
+      email: '',
+      password: '',
       profilePic: null,
       edit: false,
     };
   }
 
   componentDidMount() {
-    this.unsubscribe = this.props.navigation.addListener("focus", () => {
+    this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({ isLoading: true });
       this.checkLoggedIn();
       this.getUserData();
@@ -40,25 +39,21 @@ class ProfileScreen extends Component {
   }
 
   getUserData = async () => {
-    const authValue = await AsyncStorage.getItem("@session_token");
-    let id = await AsyncStorage.getItem("@session_id");
-    if (this.props.route.params !== undefined)
-      id = this.props.route.params.selectedId;
+    const authValue = await AsyncStorage.getItem('@session_token');
+    let id = await AsyncStorage.getItem('@session_id');
+    if (this.props.route.params !== undefined) { id = this.props.route.params.selectedId; }
     await this.getUserProfile(authValue, id);
-    return fetch("http://" + global.ip + ":3333/api/1.0.0/user/" + id, {
+    return fetch(`http://${global.ip}:3333/api/1.0.0/user/${id}`, {
       headers: {
-        "X-Authorization": authValue,
+        'X-Authorization': authValue,
       },
     })
       .then((response) => {
         if (response.status === 200) {
           return response.json();
-        } else if (response.status === 401) {
-          this.logOut();
-        } else {
-          this.logOut();
-          throw "Something went wrong";
         }
+        this.logOut();
+        throw response.status;
       })
       .then((responseJson) => {
         this.setState({
@@ -68,40 +63,38 @@ class ProfileScreen extends Component {
           email: responseJson.email,
           user_id: responseJson.user_id,
         });
-        console.log("Retrieved data of user");
-        console.log("Finished Loading profile Screen");
+        console.log('Retrieved data of user');
+        console.log('Finished Loading profile Screen');
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  getUserProfile = async (authValue, id) => {
-    return fetch(
-      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/photo",
-      {
-        method: "GET",
-        headers: {
-          "X-Authorization": authValue,
-        },
-      }
-    )
-      .then((response) => response.blob())
-      .then((res) => {
-        let data = URL.createObjectURL(res);
-        this.setState({
-          profilePic: data,
-        });
-        console.log("Retrieved Photo");
-      })
-      .catch((error) => {
-        console.log(error);
+  getUserProfile = async (authValue, id) => fetch(
+    `http://${global.ip}:3333/api/1.0.0/user/${id}/photo`,
+    {
+      method: 'GET',
+      headers: {
+        'X-Authorization': authValue,
+      },
+    },
+  )
+    .then((response) => response.blob())
+    .then((res) => {
+      const data = URL.createObjectURL(res);
+      this.setState({
+        profilePic: data,
       });
-  };
+      console.log('Retrieved Photo');
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   updateUser = async (password) => {
-    const authValue = await AsyncStorage.getItem("@session_token");
-    const id = await AsyncStorage.getItem("@session_id");
+    const authValue = await AsyncStorage.getItem('@session_token');
+    const id = await AsyncStorage.getItem('@session_id');
     let data;
     if (!password) {
       data = {
@@ -113,23 +106,20 @@ class ProfileScreen extends Component {
       data = { password: this.state.password };
     }
 
-    return fetch("http://" + global.ip + ":3333/api/1.0.0/user/" + id, {
-      method: "PATCH",
+    return fetch(`http://${global.ip}:3333/api/1.0.0/user/${id}`, {
+      method: 'PATCH',
       headers: {
-        "Content-Type": "application/json",
-        "X-Authorization": authValue,
+        'Content-Type': 'application/json',
+        'X-Authorization': authValue,
       },
       body: JSON.stringify(data),
     })
       .then((response) => {
         if (response.status === 200) {
-          console.log("Updated user");
-          this.setState({ password: "", edit: false });
-        } else if (response.status === 400) {
-          throw "Failed validation";
-        } else {
-          throw "Something went wrong";
+          console.log('Updated user');
+          this.setState({ password: '', edit: false });
         }
+        throw response.status;
       })
       .catch((error) => {
         console.log(error);
@@ -137,15 +127,15 @@ class ProfileScreen extends Component {
   };
 
   logOut = async () => {
-    await AsyncStorage.removeItem("@session_token");
-    await AsyncStorage.removeItem("@session_id");
-    this.props.navigation.navigate("Login");
+    await AsyncStorage.removeItem('@session_token');
+    await AsyncStorage.removeItem('@session_id');
+    this.props.navigation.navigate('Login');
   };
 
   checkLoggedIn = async () => {
-    const authValue = await AsyncStorage.getItem("@session_token");
+    const authValue = await AsyncStorage.getItem('@session_token');
     if (authValue == null) {
-      this.props.navigation.navigate("Login");
+      this.props.navigation.navigate('Login');
     }
   };
 
@@ -160,7 +150,7 @@ class ProfileScreen extends Component {
           <Text>Loading...</Text>
         </View>
       );
-    } else if (this.props.route.params === undefined && this.state.edit === true) {
+    } if (this.props.route.params === undefined && this.state.edit === true) {
       return (
         <View style={styles.container}>
           <Image
@@ -171,10 +161,10 @@ class ProfileScreen extends Component {
               borderWidth: 5,
               borderRadius: 200,
             }}
-          ></Image>
+          />
           <TouchableOpacity
             style={styles.buttonStyle}
-            onPress={() => this.props.navigation.navigate("ProfilePhoto")}
+            onPress={() => this.props.navigation.navigate('ProfilePhoto')}
           >
             <Text>Take Profile Picture</Text>
           </TouchableOpacity>
@@ -183,21 +173,21 @@ class ProfileScreen extends Component {
             placeholder="firstname"
             placeholderTextColor="#115297"
             onChangeText={(first_name) => this.setState({ first_name })}
-            authValue={this.state.first_name}
+            value={this.state.first_name}
           />
           <TextInput
             style={styles.TextInput}
             placeholder="lastname"
             placeholderTextColor="#115297"
             onChangeText={(last_name) => this.setState({ last_name })}
-            authValue={this.state.last_name}
+            value={this.state.last_name}
           />
           <TextInput
             style={styles.TextInput}
             placeholder="email"
             placeholderTextColor="#115297"
             onChangeText={(email) => this.setState({ email })}
-            authValue={this.state.email}
+            value={this.state.email}
             autoCapitalize="none"
           />
           <TouchableOpacity
@@ -210,9 +200,9 @@ class ProfileScreen extends Component {
             style={styles.TextInput}
             placeholder="password"
             placeholderTextColor="#115297"
-            secureTextEntry={true}
+            secureTextEntry
             onChangeText={(password) => this.setState({ password })}
-            authValue={this.state.password}
+            value={this.state.password}
             autoCapitalize="none"
           />
           <TouchableOpacity
@@ -223,7 +213,7 @@ class ProfileScreen extends Component {
           </TouchableOpacity>
         </View>
       );
-    } else if (this.props.route.params === undefined) {
+    } if (this.props.route.params === undefined) {
       return (
         <View style={styles.container}>
           <Image
@@ -232,11 +222,13 @@ class ProfileScreen extends Component {
               width: 200,
               height: 200,
               borderWidth: 5,
-              borderRadius: "100%",
+              borderRadius: '100%',
             }}
-          ></Image>
+          />
           <Text>
-            {this.state.first_name} {this.state.last_name}
+            {this.state.first_name}
+            {' '}
+            {this.state.last_name}
           </Text>
           <Text>{this.state.email}</Text>
           <TouchableOpacity
@@ -245,29 +237,30 @@ class ProfileScreen extends Component {
           >
             <Text>Edit Profile</Text>
           </TouchableOpacity>
-          <Posts selectedId={this.state.user_id}></Posts>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.container}>
-          <Image
-            source={{ uri: this.state.profilePic }}
-            style={{
-              width: 200,
-              height: 200,
-              borderWidth: 5,
-              borderRadius: "100%",
-            }}
-          ></Image>
-          <Text>
-            {this.state.first_name} {this.state.last_name}
-          </Text>
-          <Text>{this.state.email}</Text>
-          <Posts selectedId={this.state.user_id}></Posts>
+          <Posts selectedId={this.state.user_id} />
         </View>
       );
     }
+    return (
+      <View style={styles.container}>
+        <Image
+          source={{ uri: this.state.profilePic }}
+          style={{
+            width: 200,
+            height: 200,
+            borderWidth: 5,
+            borderRadius: '100%',
+          }}
+        />
+        <Text>
+          {this.state.first_name}
+          {' '}
+          {this.state.last_name}
+        </Text>
+        <Text>{this.state.email}</Text>
+        <Posts selectedId={this.state.user_id} />
+      </View>
+    );
   }
 }
 
@@ -275,43 +268,43 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 20,
     flex: 1,
-    backgroundColor: "#303030",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#303030',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 50,
-    color: "#1269c7",
+    color: '#1269c7',
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 12,
-    color: "#1269c7",
+    color: '#1269c7',
     marginBottom: 15,
   },
   buttonStyle: {
     marginTop: 10,
-    backgroundColor: "#1269c7",
-    alignItems: "center",
+    backgroundColor: '#1269c7',
+    alignItems: 'center',
     borderWidth: 2,
     padding: 5,
     width: 300,
   },
   tabButton: {
     margin: 3,
-    backgroundColor: "#1269c7",
-    alignItems: "center",
+    backgroundColor: '#1269c7',
+    alignItems: 'center',
     borderWidth: 2,
     padding: 5,
-    width: "23%",
+    width: '23%',
   },
   TextInput: {
     borderWidth: 1,
-    borderColor: "black",
+    borderColor: 'black',
     width: 300,
     marginTop: 10,
     padding: 5,
-    color: "#1269c7",
+    color: '#1269c7',
   },
 });
 

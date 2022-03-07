@@ -136,7 +136,7 @@ class PostScreen extends Component {
             placeholder="post"
             placeholderTextColor="#115297"
             onChangeText={(text) => this.setState({ text })}
-            authValue={this.state.text}
+            value={this.state.text}
             numberOfLines={4}
             multiline
           />
@@ -156,7 +156,7 @@ class PostScreen extends Component {
           placeholder="post"
           placeholderTextColor="#115297"
           onChangeText={(text) => this.setState({ text })}
-          authValue={this.state.text}
+          value={this.state.text}
           numberOfLines={4}
           multiline
         />
