@@ -5,6 +5,7 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -281,8 +282,8 @@ class Posts extends Component {
                   {new Date(item.timestamp).toTimeString().substring(0, 5)}
                 </Text>
                 <Text style={styles.postText}>{item.text}</Text>
-                <Text style={styles.text}> Likes: {item.numLikes}</Text>
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={styles.text}> Likes: {item.numLikes}</Text>
                   {this.state.userId == item.author.user_id ? (
                     <TouchableOpacity
                       style={styles.buttonStyle}
@@ -296,12 +297,12 @@ class Posts extends Component {
                     </TouchableOpacity>
                   ) : (
                     <TouchableOpacity
-                      style={styles.buttonStyle}
+                      style={styles.likeStyle}
                       onPress={() =>
                         this.likePost(item.author.user_id, item.post_id)
                       }
                     >
-                      <Text>Like</Text>
+                      <Image source={require('../images/like.png')} style={{width: 20, height: 28}}/>
                     </TouchableOpacity>
                   )}
                   {this.state.userId == item.author.user_id ? (
@@ -313,12 +314,12 @@ class Posts extends Component {
                     </TouchableOpacity>
                   ) : (
                     <TouchableOpacity
-                      style={styles.buttonStyle}
+                      style={styles.likeStyle}
                       onPress={() =>
                         this.unLikePost(item.author.user_id, item.post_id)
                       }
                     >
-                      <Text>Un Like</Text>
+                      <Image source={require('../images/unlike.png')} style={{width: 20, height: 28}}/>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -340,6 +341,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: "100%",
     marginBottom: 5,
+    width: 300,
   },
   post: {
     marginTop: 5,
@@ -357,6 +359,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 5,
     width: "20%",
+  },
+  likeStyle:{
+    margin: 3,
+    padding: 5,
+    alignItems: "center",
   },
   text: {
     color: "#1269c7",
