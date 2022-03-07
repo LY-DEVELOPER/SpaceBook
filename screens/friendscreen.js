@@ -26,7 +26,7 @@ class FriendsScreen extends Component {
   findFriends = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    return fetch("http://"+global.ip+":3333/api/1.0.0/search", {
+    return fetch("http://" + global.ip + ":3333/api/1.0.0/search", {
       headers: {
         "X-Authorization": value,
       },
@@ -52,11 +52,14 @@ class FriendsScreen extends Component {
   getFriends = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id + "/friends", {
-      headers: {
-        "X-Authorization": value,
-      },
-    })
+    return fetch(
+      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/friends",
+      {
+        headers: {
+          "X-Authorization": value,
+        },
+      }
+    )
       .then((response) => {
         if (response.status === 200) {
           return response.json();
@@ -78,7 +81,7 @@ class FriendsScreen extends Component {
   getFriendRequest = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    return fetch("http://"+global.ip+":3333/api/1.0.0/friendrequests", {
+    return fetch("http://" + global.ip + ":3333/api/1.0.0/friendrequests", {
       headers: {
         "X-Authorization": value,
       },
@@ -105,7 +108,7 @@ class FriendsScreen extends Component {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
     return fetch(
-      "http://"+global.ip+":3333/api/1.0.0/friendrequests/" + friendId,
+      "http://" + global.ip + ":3333/api/1.0.0/friendrequests/" + friendId,
       {
         method: decision,
         headers: {
@@ -129,7 +132,7 @@ class FriendsScreen extends Component {
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
     return fetch(
-      "http://"+global.ip+":3333/api/1.0.0/user/" + friendId + "/friends",
+      "http://" + global.ip + ":3333/api/1.0.0/user/" + friendId + "/friends",
       {
         method: "post",
         headers: {
@@ -210,7 +213,11 @@ class FriendsScreen extends Component {
                 </Text>
                 <TouchableOpacity
                   style={styles.buttonStyle}
-                  onPress={() => this.props.navigation.navigate("Profile", {selectedId: item.user_id})}
+                  onPress={() =>
+                    this.props.navigation.navigate("Profile", {
+                      selectedId: item.user_id,
+                    })
+                  }
                 >
                   <Text>View Profile</Text>
                 </TouchableOpacity>
@@ -306,7 +313,11 @@ class FriendsScreen extends Component {
                 </Text>
                 <TouchableOpacity
                   style={styles.buttonStyle}
-                  onPress={() => this.props.navigation.navigate("Profile", {selectedId: item.user_id})}
+                  onPress={() =>
+                    this.props.navigation.navigate("Profile", {
+                      selectedId: item.user_id,
+                    })
+                  }
                 >
                   <Text>View Profile</Text>
                 </TouchableOpacity>

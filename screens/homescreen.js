@@ -126,7 +126,7 @@ class HomeScreen extends Component {
               <Text>Log Out</Text>
             </TouchableOpacity>
           </View>
-          <Posts style={styles.posts} />
+          <Posts style={styles.posts} navigation={this.props.navigation} />
         </View>
       );
     }

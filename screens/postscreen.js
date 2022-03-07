@@ -26,9 +26,9 @@ class PostScreen extends Component {
       this.setState({ isLoading: true });
       this.checkLoggedIn();
 
-      // if(isEditing){
-      //   this.getPostData
-      // }
+      if (this.props.route.params !== undefined) {
+        this.getPostData(this.props.route.params.postId);
+      }
     });
   }
 
@@ -40,16 +40,19 @@ class PostScreen extends Component {
     //Validation here...
     const value = await AsyncStorage.getItem("@session_token");
     const id = await AsyncStorage.getItem("@session_id");
-    return fetch("http://"+global.ip+":3333/api/1.0.0/user/" + id + "/post", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Authorization": value,
-      },
-      body: JSON.stringify({
-        text: this.state.text,
-      }),
-    })
+    return fetch(
+      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/post",
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Authorization": value,
+        },
+        body: JSON.stringify({
+          text: this.state.text,
+        }),
+      }
+    )
       .then((response) => {
         console.log();
         if (response.status === 201) {
@@ -69,6 +72,71 @@ class PostScreen extends Component {
       });
   };
 
+  updatePost = async () => {
+    //Validation here...
+    const value = await AsyncStorage.getItem("@session_token");
+    const id = await AsyncStorage.getItem("@session_id");
+    const postId = this.props.route.params.postId;
+    return fetch(
+      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/post/" + postId,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Authorization": value,
+        },
+        body: JSON.stringify({
+          text: this.state.text,
+        }),
+      }
+    )
+      .then((response) => {
+        console.log();
+        if (response.status === 200) {
+          this.props.navigation.navigate("Home");
+        } else if (response.status === 400) {
+          throw "Failed validation";
+        } else {
+          throw "Something went wrong";
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  getPostData = async (postId) => {
+    const value = await AsyncStorage.getItem("@session_token");
+    const id = await AsyncStorage.getItem("@session_id");
+    return fetch(
+      "http://" + global.ip + ":3333/api/1.0.0/user/" + id + "/post/" + postId,
+      {
+        headers: {
+          "X-Authorization": value,
+        },
+      }
+    )
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 401) {
+          this.logOut();
+        } else {
+          this.logOut();
+          throw "Something went wrong";
+        }
+      })
+      .then((responseJson) => {
+        this.setState({
+          isLoading: false,
+          text: responseJson.text,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem("@session_token");
     if (value == null) {
@@ -77,7 +145,26 @@ class PostScreen extends Component {
   };
 
   render() {
-    if (this.state.isEditing) {
+    if (this.props.route.params !== undefined) {
+      return (
+        <View style={styles.container}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="post"
+            placeholderTextColor="#115297"
+            onChangeText={(text) => this.setState({ text })}
+            value={this.state.text}
+            numberOfLines={4}
+            multiline
+          />
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={() => this.updatePost()}
+          >
+            <Text>Update</Text>
+          </TouchableOpacity>
+        </View>
+      );
     } else {
       return (
         <View style={styles.container}>

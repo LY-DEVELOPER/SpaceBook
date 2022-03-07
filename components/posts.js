@@ -85,6 +85,7 @@ class Posts extends Component {
       .then((response) => {
         if (response.status === 200) {
           console.log("Deleted Post");
+          this.componentDidMount();
         } else {
           throw "Something went wrong";
         }
@@ -285,7 +286,11 @@ class Posts extends Component {
                   {this.state.userId == item.author.user_id ? (
                     <TouchableOpacity
                       style={styles.buttonStyle}
-                      onPress={() => this.props.navigation.navigate("Post")}
+                      onPress={() =>
+                        this.props.navigation.navigate("Post", {
+                          postId: item.post_id,
+                        })
+                      }
                     >
                       <Text>Edit</Text>
                     </TouchableOpacity>
