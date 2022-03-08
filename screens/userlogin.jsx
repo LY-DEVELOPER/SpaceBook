@@ -9,6 +9,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class UserLogin extends Component {
+  /* This is the login screen this is where the user logs in
+  or can go to sign up */
   constructor(props) {
     super(props);
 
@@ -18,6 +20,7 @@ class UserLogin extends Component {
     };
   }
 
+  // Checking users details are legit
   login = async () => fetch(`http://${global.ip}:3333/api/1.0.0/login`, {
     method: 'post',
     headers: {
@@ -33,6 +36,7 @@ class UserLogin extends Component {
     })
     .then(async (responseJson) => {
       console.log(responseJson);
+      // if user exists send them to the home page and store their id and auth in async storage
       await AsyncStorage.setItem('@session_token', responseJson.token);
       await AsyncStorage.setItem('@session_id', responseJson.id.toString());
       this.props.navigation.navigate('Home');
@@ -41,9 +45,8 @@ class UserLogin extends Component {
       console.log(error);
     });
 
+  // Here we render textinputs so the user can log in
   render() {
-    const response = '';
-
     return (
       <View style={styles.container}>
         <Text style={styles.title}>SpaceBook</Text>

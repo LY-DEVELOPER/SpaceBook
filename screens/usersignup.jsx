@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 
 class UserSignup extends Component {
+  /* This is the sign up screen here the user can enter details
+  to sign up */
   constructor(props) {
     super(props);
 
@@ -19,6 +21,7 @@ class UserSignup extends Component {
     };
   }
 
+  // This function send the details to the server to create an account
   signup = () => fetch(`http://${global.ip}:3333/api/1.0.0/user`, {
     method: 'post',
     headers: {
@@ -33,6 +36,7 @@ class UserSignup extends Component {
       throw response.status;
     })
     .then((responseJson) => {
+      // If sign up is successfull go to login page
       console.log('User created with ID: ', responseJson);
       this.props.navigation.navigate('Login');
     })
@@ -40,6 +44,7 @@ class UserSignup extends Component {
       console.log(error);
     });
 
+  // Here we render textinputs for the users sign up details
   render() {
     const response = '';
 
