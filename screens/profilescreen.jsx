@@ -11,6 +11,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Posts from '../components/posts';
 
 class ProfileScreen extends Component {
+  /* This is the profile screen, this class loads
+  the users profile or other users profile and their
+  posts and also lets the user edit their profile */
+
   constructor(props) {
     super(props);
 
@@ -26,6 +30,7 @@ class ProfileScreen extends Component {
     };
   }
 
+  // When component mounts run the neccessary functions
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({ isLoading: true });
@@ -38,9 +43,11 @@ class ProfileScreen extends Component {
     this.unsubscribe();
   }
 
+  // This function gets the users data for the profile
   getUserData = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     let id = await AsyncStorage.getItem('@session_id');
+    // If route params is not undefined it means we want to load another users profile
     if (this.props.route.params !== undefined) { id = this.props.route.params.selectedId; }
     await this.getUserProfile(authValue, id);
     return fetch(`http://${global.ip}:3333/api/1.0.0/user/${id}`, {
@@ -71,6 +78,7 @@ class ProfileScreen extends Component {
       });
   };
 
+  // This function gets the profile picture of the user
   getUserProfile = async (authValue, id) => fetch(
     `http://${global.ip}:3333/api/1.0.0/user/${id}/photo`,
     {
@@ -80,8 +88,9 @@ class ProfileScreen extends Component {
       },
     },
   )
-    .then((response) => response.blob())
+    .then((response) => response.blob()) // here we convert the body to a blob object
     .then((res) => {
+      // here we are converting it to a url that the render can access
       const data = URL.createObjectURL(res);
       this.setState({
         profilePic: data,
@@ -92,10 +101,12 @@ class ProfileScreen extends Component {
       console.log(error);
     });
 
+  // This function updates the users data or password
   updateUser = async (password) => {
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
     let data;
+    // If we want to update just the user info set data to user info or password
     if (!password) {
       data = {
         first_name: this.state.first_name,
@@ -106,6 +117,7 @@ class ProfileScreen extends Component {
       data = { password: this.state.password };
     }
 
+    // upload the data
     return fetch(`http://${global.ip}:3333/api/1.0.0/user/${id}`, {
       method: 'PATCH',
       headers: {
@@ -126,19 +138,17 @@ class ProfileScreen extends Component {
       });
   };
 
-  logOut = async () => {
-    await AsyncStorage.removeItem('@session_token');
-    await AsyncStorage.removeItem('@session_id');
-    this.props.navigation.navigate('Login');
-  };
-
+  // If we are not logged in log out
   checkLoggedIn = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     if (authValue == null) {
+      await AsyncStorage.removeItem('@session_token');
+      await AsyncStorage.removeItem('@session_id');
       this.props.navigation.navigate('Login');
     }
   };
 
+  // Here we render the users profile with their posts or if editing we render text boxs to edit
   render() {
     if (this.state.isLoading) {
       return (

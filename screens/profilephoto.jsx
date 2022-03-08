@@ -6,6 +6,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Camera } from 'expo-camera';
 
 class ProfilePhoto extends Component {
+  /* This is the profile photo screen
+  this class allows a user to take a photo on their camera
+  and upload it to the server to be their profile picture */
   constructor(props) {
     super(props);
 
@@ -15,18 +18,21 @@ class ProfilePhoto extends Component {
     };
   }
 
+  // When component mounts check if the app had permission to use camer else ask for it
   async componentDidMount() {
     const { status } = await Camera.requestCameraPermissionsAsync();
     this.setState({ hasPermission: status === 'granted' });
     this.checkLoggedIn();
   }
 
+  // This function uploads the picture to the server
   uploadPicture = async (data) => {
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
+    // Here the image is retrieved as base64 then converted to a blob
     const res = await fetch(data.base64);
     const blob = await res.blob();
-
+    // We then post the image in the body
     return fetch(
       `http://${global.ip}:3333/api/1.0.0/user/${id}/photo`,
       {
@@ -39,6 +45,7 @@ class ProfilePhoto extends Component {
       },
     )
       .then(() => {
+        // Go back to profile screen when photo has been uploaded
         console.log('Uploaded photo');
         this.props.navigation.navigate('Profile');
       })
@@ -47,32 +54,30 @@ class ProfilePhoto extends Component {
       });
   };
 
+  // This function captures the photo then sends it to the uploadPicture function
   takePicture = async () => {
     if (this.camera) {
+      // Set the quality of the photo and enable base64
       const options = {
         quality: 0.25,
         base64: true,
         onPictureSaved: (data) => this.uploadPicture(data),
       };
-      const ratios = await this.camera.getAvailablePictureSizesAsync();
-      console.log(ratios);
       await this.camera.takePictureAsync(options);
     }
   };
 
-  logOut = async () => {
-    await AsyncStorage.removeItem('@session_token');
-    await AsyncStorage.removeItem('@session_id');
-    this.props.navigation.navigate('Login');
-  };
-
+  // If the user is not logged in sign out
   checkLoggedIn = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     if (authValue == null) {
-      this.logOut();
+      await AsyncStorage.removeItem('@session_token');
+      await AsyncStorage.removeItem('@session_id');
+      this.props.navigation.navigate('Login');
     }
   };
 
+  // Here we are rendering the camera and the buttons to take a photo and to flip the camera
   render() {
     if (this.state.hasPermission) {
       return (

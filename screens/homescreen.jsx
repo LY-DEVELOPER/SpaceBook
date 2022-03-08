@@ -9,6 +9,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Posts from '../components/posts';
 
 class HomeScreen extends Component {
+  /* This is the Home screen class it is where the buttons
+  to access the other pages are located and it shows the
+  posts of all the users friends using the post component */
+
   constructor(props) {
     super(props);
 
@@ -17,6 +21,7 @@ class HomeScreen extends Component {
     };
   }
 
+  // When component mounts check user is logged in
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({ isLoading: true });
@@ -28,12 +33,14 @@ class HomeScreen extends Component {
     this.unsubscribe();
   }
 
+  // Logs the user out and clears the storage
   logOut = async () => {
     await AsyncStorage.removeItem('@session_token');
     await AsyncStorage.removeItem('@session_id');
     this.props.navigation.navigate('Login');
   };
 
+  // Check wether user is logged in
   checkLoggedIn = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     if (authValue == null) {
@@ -43,6 +50,8 @@ class HomeScreen extends Component {
     }
   };
 
+  /* Render in the home screen with the navigation buttons and
+  post component once it is done loading */
   render() {
     if (this.state.isLoading) {
       return (

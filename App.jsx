@@ -12,8 +12,11 @@ import ProfileScreen from './screens/profilescreen';
 import ProfilePhoto from './screens/profilephoto';
 
 const Stack = createNativeStackNavigator();
+/* This is the ip for the RESTServer change to IPV4 if
+connecting from another device otherwise use localhost(127.0.0.1) */
 global.ip = '127.0.0.1';
 
+// this is a pure component because it only need to render the navigation
 class App extends PureComponent {
   render() {
     return (

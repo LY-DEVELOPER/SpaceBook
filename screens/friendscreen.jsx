@@ -9,6 +9,10 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class FriendsScreen extends Component {
+  /* This is the Friends Screen
+  This class loads in the friends, friend requests and people to add
+  It then returns the data into 3 different tabs that the user can
+  swap between */
   constructor(props) {
     super(props);
 
@@ -20,6 +24,7 @@ class FriendsScreen extends Component {
     };
   }
 
+  // When the component mounts set the relevant states and then run the required functions
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({ isLoading: true });
@@ -34,6 +39,7 @@ class FriendsScreen extends Component {
     this.unsubscribe();
   }
 
+  // This function gets a list of users that the user can add as a friend and stores it in an array
   findFriends = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     return fetch(`http://${global.ip}:3333/api/1.0.0/search`, {
@@ -48,6 +54,7 @@ class FriendsScreen extends Component {
         throw response.status;
       })
       .then((responseJson) => {
+        // Setting the states to stop loading
         this.setState({
           isLoading: false,
           findFriendsList: responseJson,
@@ -58,6 +65,7 @@ class FriendsScreen extends Component {
       });
   };
 
+  // This function gets the friends of the user and adds them to an array
   getFriends = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
@@ -76,6 +84,7 @@ class FriendsScreen extends Component {
         throw response.status;
       })
       .then((responseJson) => {
+        // Setting the states to stop loading
         this.setState({
           isLoading: false,
           friendsList: responseJson,
@@ -86,6 +95,7 @@ class FriendsScreen extends Component {
       });
   };
 
+  // This function gets an array of all the friend requests a user has
   getFriendRequest = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     return fetch(`http://${global.ip}:3333/api/1.0.0/friendrequests`, {
@@ -110,11 +120,13 @@ class FriendsScreen extends Component {
       });
   };
 
+  // This function accepts or denys a friend request based on the variable decision
   friendDecision = async (friendId, decision) => {
     const authValue = await AsyncStorage.getItem('@session_token');
     return fetch(
       `http://${global.ip}:3333/api/1.0.0/friendrequests/${friendId}`,
       {
+        // Var decision is sent as either "POST" or "DELETE"
         method: decision,
         headers: {
           'X-Authorization': authValue,
@@ -132,6 +144,7 @@ class FriendsScreen extends Component {
       });
   };
 
+  // This function adds a friend using their id
   addFriend = async (friendId) => {
     const authValue = await AsyncStorage.getItem('@session_token');
     return fetch(
@@ -154,13 +167,17 @@ class FriendsScreen extends Component {
       });
   };
 
+  // If not logged in sign out the user
   checkLoggedIn = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     if (authValue == null) {
+      await AsyncStorage.removeItem('@session_token');
+      await AsyncStorage.removeItem('@session_id');
       this.props.navigation.navigate('Login');
     }
   };
 
+  // Here we load in the 3 different pages which are selected depending on the state tabSelect
   render() {
     if (this.state.isLoading) {
       return (

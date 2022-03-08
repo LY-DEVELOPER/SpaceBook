@@ -9,6 +9,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class PostScreen extends Component {
+  /* This is the post screen this class is where the user
+  can create or edit their posts */
   constructor(props) {
     super(props);
 
@@ -17,10 +19,11 @@ class PostScreen extends Component {
     };
   }
 
+  // When the component mounts check logged in and if editing post load post data
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
-
+      // if route params is not undefined it means the user is going to edit their post
       if (this.props.route.params !== undefined) {
         this.getPostData(this.props.route.params.postId);
       }
@@ -31,8 +34,8 @@ class PostScreen extends Component {
     this.unsubscribe();
   }
 
+  // Send the post to the server
   postData = async () => {
-    // Validation here...
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
     return fetch(
@@ -64,8 +67,8 @@ class PostScreen extends Component {
       });
   };
 
+  // update the post to the server
   updatePost = async () => {
-    // Validation here...
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
     const { postId } = this.props.route.params;
@@ -93,6 +96,7 @@ class PostScreen extends Component {
       });
   };
 
+  // get the post from the server so the user can edit it
   getPostData = async (postId) => {
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
@@ -120,35 +124,19 @@ class PostScreen extends Component {
       });
   };
 
+  // check if user is logged in else log them out
   checkLoggedIn = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     if (authValue == null) {
+      await AsyncStorage.removeItem('@session_token');
+      await AsyncStorage.removeItem('@session_id');
       this.props.navigation.navigate('Login');
     }
   };
 
+  /* Depending on if route params has been defined (means user is editing the post)
+  show a text input with a create or update button */
   render() {
-    if (this.props.route.params !== undefined) {
-      return (
-        <View style={styles.container}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="post"
-            placeholderTextColor="#115297"
-            onChangeText={(text) => this.setState({ text })}
-            value={this.state.text}
-            numberOfLines={4}
-            multiline
-          />
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={() => this.updatePost()}
-          >
-            <Text>Update</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
     return (
       <View style={styles.container}>
         <TextInput
@@ -162,9 +150,9 @@ class PostScreen extends Component {
         />
         <TouchableOpacity
           style={styles.buttonStyle}
-          onPress={() => this.postData()}
+          onPress={() => this.updatePost()}
         >
-          <Text>Post</Text>
+          <Text>{this.props.route.params !== undefined ? 'Update' : 'Create'}</Text>
         </TouchableOpacity>
       </View>
     );
