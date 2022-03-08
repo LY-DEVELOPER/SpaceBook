@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '100%',
     marginBottom: 5,
-    width: 300,
+    width: '100%',
   },
   post: {
     marginTop: 5,
@@ -407,7 +407,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 5,
     width: '98%',
-    borderRadius: 7,
     alignSelf: 'center',
   },
   buttonStyle: {

@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Posts from '../components/posts';

@@ -135,6 +135,7 @@ class FriendsScreen extends Component {
     )
       .then((response) => {
         if (response.status === 200) {
+          this.componentDidMount();
           return response.json();
         }
         throw response.status;
@@ -158,6 +159,7 @@ class FriendsScreen extends Component {
     )
       .then((response) => {
         if (response.status === 200) {
+          this.componentDidMount();
           return response.json();
         }
         throw response.status;
@@ -188,18 +190,18 @@ class FriendsScreen extends Component {
     } if (this.state.tabSelect === 'myFriends') {
       return (
         <View style={styles.container}>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={styles.tabContainer}>
             <TouchableOpacity
               style={styles.selectedTab}
               onPress={() => this.setState({ tabSelect: 'myFriends' })}
             >
-              <Text>My Friends</Text>
+              <Text style={{ color: 'grey' }}>My Friends</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.tabButton}
               onPress={() => this.setState({ tabSelect: 'friendReq' })}
             >
-              <Text>Friend Request</Text>
+              <Text>Requests</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.tabButton}
@@ -235,7 +237,7 @@ class FriendsScreen extends Component {
     } if (this.state.tabSelect === 'friendReq') {
       return (
         <View style={styles.container}>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={styles.tabContainer}>
             <TouchableOpacity
               style={styles.tabButton}
               onPress={() => this.setState({ tabSelect: 'myFriends' })}
@@ -246,7 +248,7 @@ class FriendsScreen extends Component {
               style={styles.selectedTab}
               onPress={() => this.setState({ tabSelect: 'friendReq' })}
             >
-              <Text>Friend Request</Text>
+              <Text style={{ color: 'grey' }}>Requests</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.tabButton}
@@ -286,7 +288,7 @@ class FriendsScreen extends Component {
     }
     return (
       <View style={styles.container}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.tabContainer}>
           <TouchableOpacity
             style={styles.tabButton}
             onPress={() => this.setState({ tabSelect: 'myFriends' })}
@@ -297,13 +299,13 @@ class FriendsScreen extends Component {
             style={styles.tabButton}
             onPress={() => this.setState({ tabSelect: 'friendReq' })}
           >
-            <Text>Friend Request</Text>
+            <Text>Requests</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.selectedTab}
             onPress={() => this.setState({ tabSelect: 'findFriends' })}
           >
-            <Text>Find Friends</Text>
+            <Text style={{ color: 'grey' }}>Find Friends</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.subtitle}>Find Friends</Text>
@@ -346,6 +348,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  tabContainer: {
+    flexDirection: 'row',
+    width: 310,
+    justifyContent: 'center',
+    padding: 0,
+    marginTop: 5,
+  },
   subtitle: {
     fontSize: 20,
     color: '#1269c7',
@@ -360,21 +369,19 @@ const styles = StyleSheet.create({
     width: 300,
   },
   tabButton: {
-    margin: 1,
     backgroundColor: '#1269c7',
     alignItems: 'center',
     borderWidth: 2,
     padding: 5,
-    width: '32%',
+    width: '32.9%',
   },
   selectedTab: {
-    margin: 1,
     backgroundColor: '#303030',
     alignItems: 'center',
     borderWidth: 2,
     borderBottomWidth: 0,
     padding: 5,
-    width: '32%',
+    width: '32.9%',
   },
   text: {
     color: '#1269c7',

@@ -139,21 +139,22 @@ class PostScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          onPress={() =>
+            (this.props.route.params !== undefined ? this.updatePost() : this.postData())}
+        >
+          <Text>{this.props.route.params !== undefined ? 'Update' : 'Create'}</Text>
+        </TouchableOpacity>
         <TextInput
           style={styles.textInput}
-          placeholder="post"
+          placeholder="Your text here"
           placeholderTextColor="#115297"
           onChangeText={(text) => this.setState({ text })}
           value={this.state.text}
           numberOfLines={4}
           multiline
         />
-        <TouchableOpacity
-          style={styles.buttonStyle}
-          onPress={() => this.updatePost()}
-        >
-          <Text>{this.props.route.params !== undefined ? 'Update' : 'Create'}</Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -164,17 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#303030',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 50,
-    color: '#1269c7',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 12,
-    color: '#1269c7',
-    marginBottom: 30,
+    justifyContent: 'flex-start',
   },
   buttonStyle: {
     marginTop: 10,
@@ -186,12 +177,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     textAlignVertical: 'top',
-    borderWidth: 1,
-    borderColor: 'black',
-    width: 300,
+    borderTopWidth: 1,
+    width: '100%',
     marginTop: 10,
     padding: 5,
-    height: '30%',
+    height: '100%',
     color: '#1269c7',
   },
 });

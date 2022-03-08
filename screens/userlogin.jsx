@@ -82,7 +82,6 @@ class UserLogin extends Component {
         >
           <Text>Sign Up</Text>
         </TouchableOpacity>
-        <Text>{response}</Text>
       </View>
     );
   }
