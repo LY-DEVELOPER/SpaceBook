@@ -3,13 +3,14 @@ import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import UserLogin from './screens/userlogin';
-import UserSignup from './screens/usersignup';
-import HomeScreen from './screens/homescreen';
-import PostScreen from './screens/postscreen';
-import FriendsScreen from './screens/friendscreen';
-import ProfileScreen from './screens/profilescreen';
-import ProfilePhoto from './screens/profilephoto';
+import UserLogin from './src/screens/userlogin';
+import UserSignup from './src/screens/usersignup';
+import HomeScreen from './src/screens/homescreen';
+import PostScreen from './src/screens/postscreen';
+import FriendsScreen from './src/screens/friendscreen';
+import ProfileScreen from './src/screens/profilescreen';
+import ProfilePhoto from './src/screens/profilephoto';
+import DraftScreen from './src/screens/draftscreen';
 
 const Stack = createNativeStackNavigator();
 /* This is the ip for the RESTServer change to IPV4 if
@@ -87,6 +88,20 @@ class App extends PureComponent {
           <Stack.Screen
             name="ProfilePhoto"
             component={ProfilePhoto}
+            options={{
+              headerStyle: {
+                backgroundColor: '#202020',
+              },
+              headerTintColor: '#1269c7',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+                color: '#1269c7',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Drafts"
+            component={DraftScreen}
             options={{
               headerStyle: {
                 backgroundColor: '#202020',

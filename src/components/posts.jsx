@@ -57,7 +57,6 @@ class Posts extends Component {
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
     this.setState({ userId: id });
-    console.log('getting friends');
     // Fetch the friends of the user or skip if only loading one person
     if (!skip) {
       return fetch(`http://${global.ip}:3333/api/1.0.0/user/${id}/friends`, {
@@ -140,8 +139,8 @@ class Posts extends Component {
       },
     })
       .then((response) => {
-        console.log(`Getting posts of ${id}`);
         if (response.status === 200) {
+          console.log(`Got posts of ${id}`);
           return response.json();
         }
         throw response.status;

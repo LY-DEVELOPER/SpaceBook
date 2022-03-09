@@ -17,16 +17,26 @@ class PostScreen extends Component {
     this.state = {
       text: '',
       error: '',
+      draftId: null,
     };
   }
 
   // When the component mounts check logged in and if editing post load post data
   componentDidMount() {
+    this.setState({
+      text: '',
+      draftId: null,
+    });
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
-      // if route params is not undefined it means the user is going to edit their post
+      // if route params is not undefined it means the user is going to edit their post or draft
       if (this.props.route.params !== undefined) {
-        this.getPostData(this.props.route.params.postId);
+        if (this.props.route.params.postId !== undefined) {
+          this.getPostData(this.props.route.params.postId);
+        } else {
+          this.setState({ draftId: this.props.route.params.draftId });
+          this.getDraft();
+        }
       }
     });
   }
@@ -34,6 +44,64 @@ class PostScreen extends Component {
   componentWillUnmount() {
     this.unsubscribe();
   }
+
+  // This function saves the post as a draft
+  createDraft = async () => {
+    let drafts = await AsyncStorage.getItem('drafts');
+    console.log(drafts);
+    // if draft id is not null means we are updating a draft instead
+    if (this.state.draftId === null) {
+      // if catches it means that there are no drafts
+      try {
+        // create a draft with an id greater that the last draft
+        drafts = JSON.parse(drafts);
+        const id = drafts[(drafts.length - 1)].id + 1;
+        drafts.push({ text: this.state.text, id });
+        await AsyncStorage.setItem('drafts', JSON.stringify(drafts));
+        this.props.navigation.navigate('Drafts');
+      } catch (error) {
+        // if no drafts exist initialise the first one
+        console.log('No drafts exist');
+        drafts = [{ text: this.state.text, id: 0 }];
+        await AsyncStorage.setItem('drafts', JSON.stringify(drafts));
+        this.props.navigation.navigate('Drafts');
+      }
+    } else {
+      const tempDrafts = JSON.parse(await AsyncStorage.getItem('drafts'));
+      let pickedOne;
+      // find the index of the draft
+      tempDrafts.forEach((object, index) => {
+        if (object.id === this.state.draftId) {
+          console.log(object.id);
+          console.log(index);
+          pickedOne = index;
+        }
+      });
+
+      // update the draft text
+      tempDrafts[pickedOne].text = this.state.text;
+      this.componentDidMount();
+      await AsyncStorage.setItem('drafts', JSON.stringify(tempDrafts));
+      this.props.navigation.navigate('Drafts');
+    }
+  };
+
+  // This function gets the draft
+  getDraft = async () => {
+    const tempDrafts = JSON.parse(await AsyncStorage.getItem('drafts'));
+    let pickedOne;
+
+    // Find the index of the draft
+    tempDrafts.forEach((object, index) => {
+      if (object.id === this.state.draftId) {
+        console.log(object.id);
+        console.log(index);
+        pickedOne = index;
+      }
+    });
+
+    this.setState({ text: tempDrafts[pickedOne].text });
+  };
 
   // Send the post to the server
   postData = async () => {
@@ -150,13 +218,27 @@ class PostScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.buttonStyle}
-          onPress={() =>
-            (this.props.route.params !== undefined ? this.updatePost() : this.postData())}
-        >
-          <Text>{this.props.route.params !== undefined ? 'Update' : 'Create'}</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={() => this.props.navigation.navigate('Drafts')}
+          >
+            <Text>Drafts</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={() => this.createDraft()}
+          >
+            <Text>Save Draft</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={() =>
+              (this.props.route.params !== undefined ? this.updatePost() : this.postData())}
+          >
+            <Text>{this.props.route.params !== undefined ? 'Update' : 'Create'}</Text>
+          </TouchableOpacity>
+        </View>
         <Text>{this.state.error}</Text>
         <TextInput
           style={styles.textInput}
@@ -180,12 +262,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   buttonStyle: {
+    margin: 5,
     marginTop: 10,
     backgroundColor: '#1269c7',
     alignItems: 'center',
     borderWidth: 2,
     padding: 5,
-    width: 300,
+    width: '30%',
   },
   textInput: {
     textAlignVertical: 'top',
