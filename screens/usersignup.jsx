@@ -44,7 +44,7 @@ class UserSignup extends Component {
       tempError = `${tempError} Password must be great than 8 characters long, contain 1 capital letter and contain 1 number! \n`;
     }
     // Names validation
-    if (!this.state.first_name.match(/^([A-Za-z])+$/) && !this.state.first_name.match(/^([A-Za-z])+$/)) {
+    if (!this.state.first_name.match(/^([\sA-z])+$/) || !this.state.last_name.match(/^([\sA-z])+$/)) {
       valid = false;
       tempError = `${tempError} First name & Lastname need to be at least 1 charcter long and only letters \n`;
     }

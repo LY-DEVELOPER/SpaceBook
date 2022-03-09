@@ -37,6 +37,7 @@ class Posts extends Component {
       isLoading: true,
       friendList: [],
       postList: [],
+      postsExist: false,
     });
     // If selectedId is not undefined we only need to load posts of a single user
     if (selectedId !== undefined) {

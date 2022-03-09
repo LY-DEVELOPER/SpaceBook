@@ -6,7 +6,6 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  ImageBackground,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Posts from '../components/posts';
@@ -26,6 +25,8 @@ class ProfileScreen extends Component {
       last_name: '',
       email: '',
       password: '',
+      confPassword: '',
+      error: '',
       profilePic: null,
       edit: false,
     };
@@ -107,36 +108,64 @@ class ProfileScreen extends Component {
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
     let data;
+    let valid = true;
+    let tempError = '';
+    this.setState({ error: '' });
     // If we want to update just the user info set data to user info or password
     if (!password) {
+      // Email validation
+      if (!this.state.email.match(/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/)) {
+        valid = false;
+        tempError = `${tempError} Email is not valid! \n`;
+      }
+      // Names validation
+      if (!this.state.first_name.match(/^([\sA-z])+$/) || !this.state.last_name.match(/^([\sA-z])+$/)) {
+        valid = false;
+        tempError = `${tempError} First name & Lastname need to be at least 1 charcter long and only letters \n`;
+      }
       data = {
         first_name: this.state.first_name,
         last_name: this.state.last_name,
         email: this.state.email,
       };
     } else {
+      // Password match validation
+      if (this.state.password !== this.state.confPassword) {
+        valid = false;
+        tempError = `${tempError} Passwords do not match! \n`;
+      }
+      // Password validation
+      if (!this.state.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)) {
+        valid = false;
+        tempError = `${tempError} Password must be great than 8 characters long, contain 1 capital letter and contain 1 number! \n`;
+      }
       data = { password: this.state.password };
     }
 
+    this.setState({ error: tempError });
+
     // upload the data
-    return fetch(`http://${global.ip}:3333/api/1.0.0/user/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Authorization': authValue,
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          console.log('Updated user');
-          this.setState({ password: '', edit: false });
-        }
-        throw response.status;
+    if (valid) {
+      return fetch(`http://${global.ip}:3333/api/1.0.0/user/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': authValue,
+        },
+        body: JSON.stringify(data),
       })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((response) => {
+          if (response.status === 200) {
+            console.log('Updated user');
+            return this.setState({ password: '', edit: false });
+          }
+          this.setState({ error: 'Details could not be updated' });
+          throw response.status;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   // If we are not logged in log out
@@ -216,12 +245,21 @@ class ProfileScreen extends Component {
             value={this.state.password}
             autoCapitalize="none"
           />
+          <TextInput
+            style={styles.TextInput}
+            secureTextEntry
+            placeholder="confirm password"
+            placeholderTextColor="#115297"
+            onChangeText={(confPassword) => this.setState({ confPassword })}
+            autoCapitalize="none"
+          />
           <TouchableOpacity
             style={styles.buttonStyle}
             onPress={() => this.updateUser(true)}
           >
             <Text>Update Password</Text>
           </TouchableOpacity>
+          <Text>{this.state.error}</Text>
         </View>
       );
     } if (this.props.route.params === undefined) {

@@ -16,6 +16,7 @@ class PostScreen extends Component {
 
     this.state = {
       text: '',
+      error: '',
     };
   }
 
@@ -38,33 +39,38 @@ class PostScreen extends Component {
   postData = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
-    return fetch(
-      `http://${global.ip}:3333/api/1.0.0/user/${id}/post`,
-      {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization': authValue,
+    if (this.state.text.match(/^([A-z\d\s()!?#])+$/)) { // Validation
+      return fetch(
+        `http://${global.ip}:3333/api/1.0.0/user/${id}/post`,
+        {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Authorization': authValue,
+          },
+          body: JSON.stringify({
+            text: this.state.text,
+          }),
         },
-        body: JSON.stringify({
-          text: this.state.text,
-        }),
-      },
-    )
-      .then((response) => {
-        console.log();
-        if (response.status === 201) {
-          return response.json();
-        }
-        throw response.status;
-      })
-      .then((responseJson) => {
-        console.log('Post Created with ID: ', responseJson);
-        this.props.navigation.navigate('Home');
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      )
+        .then((response) => {
+          console.log();
+          if (response.status === 201) {
+            return response.json();
+          }
+          this.setState({ error: 'Post could not be sent' });
+          throw response.status;
+        })
+        .then((responseJson) => {
+          console.log('Post Created with ID: ', responseJson);
+          this.props.navigation.navigate('Home');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    this.setState({ error: 'Post contains unallowed characters or is empty!' });
+    return null;
   };
 
   // update the post to the server
@@ -72,28 +78,33 @@ class PostScreen extends Component {
     const authValue = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@session_id');
     const { postId } = this.props.route.params;
-    return fetch(
-      `http://${global.ip}:3333/api/1.0.0/user/${id}/post/${postId}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization': authValue,
+    if (this.state.text.match(/^([A-z\d\s()!?#])+$/)) { // Validation
+      return fetch(
+        `http://${global.ip}:3333/api/1.0.0/user/${id}/post/${postId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Authorization': authValue,
+          },
+          body: JSON.stringify({
+            text: this.state.text,
+          }),
         },
-        body: JSON.stringify({
-          text: this.state.text,
-        }),
-      },
-    )
-      .then((response) => {
-        if (response.status === 200) {
-          this.props.navigation.navigate('Home');
-        }
-        throw response.status;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      )
+        .then((response) => {
+          if (response.status === 200) {
+            this.props.navigation.navigate('Home');
+          }
+          this.setState({ error: 'Post could not be updated' });
+          throw response.status;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    this.setState({ error: 'Post contains unallowed characters or is empty!' });
+    return null;
   };
 
   // get the post from the server so the user can edit it
@@ -146,6 +157,7 @@ class PostScreen extends Component {
         >
           <Text>{this.props.route.params !== undefined ? 'Update' : 'Create'}</Text>
         </TouchableOpacity>
+        <Text>{this.state.error}</Text>
         <TextInput
           style={styles.textInput}
           placeholder="Your text here"
