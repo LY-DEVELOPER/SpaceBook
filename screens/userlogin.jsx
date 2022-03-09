@@ -17,33 +17,43 @@ class UserLogin extends Component {
     this.state = {
       email: '',
       password: '',
+      error: '',
     };
   }
 
   // Checking users details are legit
-  login = async () => fetch(`http://${global.ip}:3333/api/1.0.0/login`, {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(this.state),
-  })
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      }
-      throw response.status;
-    })
-    .then(async (responseJson) => {
-      console.log(responseJson);
-      // if user exists send them to the home page and store their id and auth in async storage
-      await AsyncStorage.setItem('@session_token', responseJson.token);
-      await AsyncStorage.setItem('@session_id', responseJson.id.toString());
-      this.props.navigation.navigate('Home');
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  login = async () => {
+    this.setState({ error: '' });
+    if (this.state.email.match(/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/)
+    && this.state.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)) { // Validation using regex
+      return fetch(`http://${global.ip}:3333/api/1.0.0/login`, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.state),
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          }
+          this.setState({ error: 'Email or password incorrect!' });
+          throw response.status;
+        })
+        .then(async (responseJson) => {
+          console.log(responseJson);
+          // if user exists send them to the home page and store their id and auth in async storage
+          await AsyncStorage.setItem('@session_token', responseJson.token);
+          await AsyncStorage.setItem('@session_id', responseJson.id.toString());
+          this.props.navigation.navigate('Home');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    this.setState({ error: 'Email or password incorrect!' });
+    return null;
+  };
 
   // Here we render textinputs so the user can log in
   render() {
@@ -82,6 +92,7 @@ class UserLogin extends Component {
         >
           <Text>Sign Up</Text>
         </TouchableOpacity>
+        <Text>{this.state.error}</Text>
       </View>
     );
   }
