@@ -27,11 +27,10 @@ class FriendsScreen extends Component {
   // When the component mounts set the relevant states and then run the required functions
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.setState({ isLoading: true });
-      this.checkLoggedIn();
-      this.findFriends();
-      this.getFriends();
-      this.getFriendRequest();
+      this.setState({
+        tabSelect: 'myFriends',
+      });
+      this.resetPage();
     });
   }
 
@@ -39,10 +38,23 @@ class FriendsScreen extends Component {
     this.unsubscribe();
   }
 
+  // Reload the page because calling componentDidMount was not working
+  resetPage = async () => {
+    this.setState({
+      isLoading: true,
+      findFriendsList: [],
+      friendsList: [],
+    });
+    this.checkLoggedIn();
+    await this.getFriends();
+    this.findFriends();
+    this.getFriendRequest();
+  };
+
   // This function gets a list of users that the user can add as a friend and stores it in an array
   findFriends = async () => {
     const authValue = await AsyncStorage.getItem('@session_token');
-    return fetch(`http://${global.ip}:3333/api/1.0.0/search`, {
+    return fetch(`http://${global.ip}:3333/api/1.0.0/search?search_in=friends&limit=20&offset=0`, {
       headers: {
         'X-Authorization': authValue,
       },
@@ -54,11 +66,22 @@ class FriendsScreen extends Component {
         throw response.status;
       })
       .then((responseJson) => {
+        // This for each removes uses friends from the find friends list
+        this.state.friendsList.forEach((object) => {
+          let toSplice = null;
+          responseJson.forEach((object2, index2) => {
+            if (object.user_id === object2.user_id) {
+              toSplice = index2;
+            }
+          });
+          responseJson.splice(toSplice, 1);
+        });
         // Setting the states to stop loading
         this.setState({
           isLoading: false,
           findFriendsList: responseJson,
         });
+        console.log('found friends');
       })
       .catch((error) => {
         console.log(error);
@@ -84,11 +107,11 @@ class FriendsScreen extends Component {
         throw response.status;
       })
       .then((responseJson) => {
-        // Setting the states to stop loading
+        // Setting the states
         this.setState({
-          isLoading: false,
           friendsList: responseJson,
         });
+        console.log('got friends');
       })
       .catch((error) => {
         console.log(error);
@@ -135,8 +158,7 @@ class FriendsScreen extends Component {
     )
       .then((response) => {
         if (response.status === 200) {
-          this.componentDidMount();
-          return response.json();
+          this.resetPage();
         }
         throw response.status;
       })
@@ -158,9 +180,8 @@ class FriendsScreen extends Component {
       },
     )
       .then((response) => {
-        if (response.status === 200) {
-          this.componentDidMount();
-          return response.json();
+        if (response.status === 201) {
+          this.resetPage();
         }
         throw response.status;
       })

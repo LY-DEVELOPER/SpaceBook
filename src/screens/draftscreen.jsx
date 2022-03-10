@@ -49,8 +49,6 @@ class DraftScreen extends Component {
     // find the index of the picked draft
     tempDrafts.forEach((object, index) => {
       if (object.id === id) {
-        console.log(object.id);
-        console.log(index);
         pickedOne = index;
       }
     });
