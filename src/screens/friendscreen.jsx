@@ -5,8 +5,10 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Picker,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TextInput } from 'react-native-web';
 
 class FriendsScreen extends Component {
   /* This is the Friends Screen
@@ -21,6 +23,9 @@ class FriendsScreen extends Component {
       findFriendsList: [],
       friendsList: [],
       tabSelect: 'myFriends',
+      query: '',
+      searchIn: 'all',
+      offset: 0,
     };
   }
 
@@ -51,10 +56,13 @@ class FriendsScreen extends Component {
     this.getFriendRequest();
   };
 
-  // This function gets a list of users that the user can add as a friend and stores it in an array
+  // This function gets a list of users based on a search
   findFriends = async () => {
+    this.setState({
+      isLoading: false,
+    });
     const authValue = await AsyncStorage.getItem('@session_token');
-    return fetch(`http://${global.ip}:3333/api/1.0.0/search?search_in=friends&limit=20&offset=0`, {
+    return fetch(`http://${global.ip}:3333/api/1.0.0/search?q=${this.state.query}&search_in=${this.state.searchIn}&limit=5&offset=${this.state.offset}`, {
       headers: {
         'X-Authorization': authValue,
       },
@@ -66,22 +74,12 @@ class FriendsScreen extends Component {
         throw response.status;
       })
       .then((responseJson) => {
-        // This for each removes uses friends from the find friends list
-        this.state.friendsList.forEach((object) => {
-          let toSplice = null;
-          responseJson.forEach((object2, index2) => {
-            if (object.user_id === object2.user_id) {
-              toSplice = index2;
-            }
-          });
-          responseJson.splice(toSplice, 1);
-        });
         // Setting the states to stop loading
         this.setState({
           isLoading: false,
           findFriendsList: responseJson,
         });
-        console.log('found friends');
+        console.log('Searched users');
       })
       .catch((error) => {
         console.log(error);
@@ -228,7 +226,7 @@ class FriendsScreen extends Component {
               style={styles.tabButton}
               onPress={() => this.setState({ tabSelect: 'findFriends' })}
             >
-              <Text>Find Friends</Text>
+              <Text>Search</Text>
             </TouchableOpacity>
           </View>
           <Text style={styles.subtitle}>My Friends</Text>
@@ -275,7 +273,7 @@ class FriendsScreen extends Component {
               style={styles.tabButton}
               onPress={() => this.setState({ tabSelect: 'findFriends' })}
             >
-              <Text>Find Friends</Text>
+              <Text>Search</Text>
             </TouchableOpacity>
           </View>
           <Text style={styles.subtitle}>Friend Requests</Text>
@@ -326,11 +324,56 @@ class FriendsScreen extends Component {
             style={styles.selectedTab}
             onPress={() => this.setState({ tabSelect: 'findFriends' })}
           >
-            <Text style={{ color: 'grey' }}>Find Friends</Text>
+            <Text style={{ color: 'grey' }}>Search</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.subtitle}>Find Friends</Text>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="search"
+          placeholderTextColor="#115297"
+          onChangeText={(query) => this.setState({ query })}
+          value={this.state.query}
+          autoCapitalize="none"
+        />
+        <Picker
+          selectedValue={this.searchIn}
+          style={styles.TextInput}
+          onValueChange={(searchIn) => this.setState({ searchIn })}
+        >
+          <Picker.Item label="Search everyone" value="all" />
+          <Picker.Item label="Search my friends" value="friends" />
+        </Picker>
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          onPress={() => this.findFriends()}
+        >
+          <Text>Search</Text>
+        </TouchableOpacity>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            style={styles.pageButton}
+            onPress={() => {
+              this.setState({ offset: this.state.offset > 0 ? this.state.offset - 5 : 0 });
+              this.findFriends();
+            }}
+          >
+            <Text>Prev Page</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.pageButton}
+            onPress={() => {
+              this.setState({
+                offset: this.state.findFriendsList.length === 5
+                  ? this.state.offset + 5 : this.state.offset
+              });
+              this.findFriends();
+            }}
+          >
+            <Text>Next Page</Text>
+          </TouchableOpacity>
+        </View>
         <FlatList
+          style={{ marginTop: 10 }}
           data={this.state.findFriendsList}
           renderItem={({ item }) => (
             <View>
@@ -406,6 +449,24 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#1269c7',
+  },
+  TextInput: {
+    borderWidth: 1,
+    borderColor: 'black',
+    width: 300,
+    marginTop: 10,
+    padding: 5,
+    color: '#1269c7',
+    backgroundColor: '#303030',
+  },
+  pageButton: {
+    margin: 10,
+    marginTop: 10,
+    backgroundColor: '#1269c7',
+    alignItems: 'center',
+    borderWidth: 2,
+    padding: 5,
+    width: 140,
   },
 });
 
