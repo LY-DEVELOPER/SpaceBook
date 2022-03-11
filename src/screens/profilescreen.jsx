@@ -166,6 +166,7 @@ class ProfileScreen extends Component {
           console.log(error);
         });
     }
+    return null;
   };
 
   // If we are not logged in log out

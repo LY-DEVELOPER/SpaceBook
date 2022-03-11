@@ -106,9 +106,7 @@ class Posts extends Component {
       );
 
       // now we call postOrder which orders the posts by date
-      const { postList } = this.state;
-      const fixed = await this.postOrder(postList);
-      this.setState({ postList: fixed });
+      await this.postOrder();
     }
 
     const { postList } = this.state;
@@ -158,12 +156,13 @@ class Posts extends Component {
   };
 
   /* This function orders all of the posts by date */
-  postOrder = async (data) => {
-    const newList = [data[0]];
+  postOrder = async () => {
+    const { postList } = this.state;
+    const newList = [postList[0]];
     let skip = false;
     /* for each post compare the date with posts in newlist
     and then place the post in newlist in correct date order */
-    data.forEach((i) => {
+    postList.forEach((i) => {
       // skip first post
       if (skip) {
         let place = 0;
@@ -192,7 +191,7 @@ class Posts extends Component {
       skip = true;
     });
     console.log('Reordered');
-    return newList;
+    this.setState({ postList: newList });
   };
 
   // This function simply deletes a post using the suppliedd ID

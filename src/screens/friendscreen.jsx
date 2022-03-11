@@ -353,7 +353,9 @@ class FriendsScreen extends Component {
           <TouchableOpacity
             style={styles.pageButton}
             onPress={() => {
-              this.setState({ offset: this.state.offset > 0 ? this.state.offset - 5 : 0 });
+              this.setState(
+                (prevState) => ({ offset: prevState.offset > 0 ? prevState.offset - 5 : 0 }),
+              );
               this.findFriends();
             }}
           >
@@ -364,7 +366,7 @@ class FriendsScreen extends Component {
             onPress={() => {
               this.setState({
                 offset: this.state.findFriendsList.length === 5
-                  ? this.state.offset + 5 : this.state.offset
+                  ? this.state.offset + 5 : this.state.offset,
               });
               this.findFriends();
             }}

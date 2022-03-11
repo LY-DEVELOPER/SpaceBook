@@ -37,6 +37,7 @@ class HomeScreen extends Component {
   logOut = async () => {
     await AsyncStorage.removeItem('@session_token');
     await AsyncStorage.removeItem('@session_id');
+    console.log('Logged out');
     this.props.navigation.navigate('Login');
   };
 

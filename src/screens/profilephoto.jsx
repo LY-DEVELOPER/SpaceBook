@@ -85,7 +85,7 @@ class ProfilePhoto extends Component {
           <Camera
             style={styles.camera}
             type={this.state.type}
-            ref={(ref) => (this.camera = ref)}
+            ref={(ref) => { this.camera = ref; }}
           >
             <View
               style={{
@@ -96,8 +96,8 @@ class ProfilePhoto extends Component {
             >
               <TouchableOpacity
                 style={styles.buttonStyle}
-                onPress={() => {
-                  const type = this.state.type === Camera.Constants.Type.back.toString()
+                onPress={(state = this.state) => {
+                  const type = state.type === Camera.Constants.Type.back.toString()
                     ? Camera.Constants.Type.front
                     : Camera.Constants.Type.back;
 
